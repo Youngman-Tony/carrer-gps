@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Варианты визуализации готовности</title>
+<style>
+  :root {
+    --primary: #6C3AED;
+    --primary-light: #EDE9FE;
+    --success: #059669;
+    --success-light: #D1FAE5;
+    --warning: #D97706;
+    --warning-light: #FEF3C7;
+    --danger: #DC2626;
+    --danger-light: #FEE2E2;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+    --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:var(--font); background:#F0F2F5; color:var(--gray-900); padding:32px; }
+  h1 { font-size:22px; font-weight:700; margin-bottom:6px; }
+  .subtitle { font-size:14px; color:var(--gray-500); margin-bottom:32px; }
+  .variant { background:#fff; border-radius:16px; padding:28px; margin-bottom:24px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  .variant-title { font-size:16px; font-weight:700; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+  .variant-desc { font-size:12.5px; color:var(--gray-500); margin-bottom:20px; line-height:1.5; }
+  .variant-tag { font-size:10px; padding:2px 8px; border-radius:100px; font-weight:600; }
+  .tag-pro { background:var(--success-light); color:var(--success); }
+  .tag-con { background:var(--danger-light); color:var(--danger); }
+  .pros-cons { display:flex; gap:24px; margin-top:16px; font-size:12px; }
+  .pros-cons div { flex:1; }
+  .pros-cons h4 { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+  .pros-cons ul { padding-left:16px; color:var(--gray-600); line-height:1.7; }
+
+  /* Gauge */
+  .gauge-center { display:flex; align-items:center; gap:32px; }
+  .gauge { width:160px; height:160px; position:relative; flex-shrink:0; }
+  .gauge svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .gauge-bg { fill:none; stroke:var(--gray-200); stroke-width:10; }
+  .gauge-fill { fill:none; stroke-width:10; stroke-linecap:round; }
+  .gauge-label { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .gauge-value { font-size:34px; font-weight:700; }
+  .gauge-text { font-size:11px; color:var(--gray-500); }
+  .bars { flex:1; }
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .bar-name { font-size:12.5px; min-width:180px; color:var(--gray-700); }
+  .bar-track { flex:1; height:7px; background:var(--gray-200); border-radius:4px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:4px; }
+  .bar-pct { font-size:12px; font-weight:600; min-width:36px; text-align:right; }
+
+  /* Radar */
+  .radar-wrap { display:flex; align-items:center; gap:40px; }
+  .radar-legend { font-size:12.5px; }
+  .radar-legend-item { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .radar-legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .radar-legend-pct { font-weight:600; min-width:36px; }
+
+  /* Vertical bars */
+  .vbars { display:flex; align-items:flex-end; gap:24px; height:200px; padding:0 20px; justify-content:center; }
+  .vbar { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .vbar-col { width:48px; border-radius:6px 6px 0 0; position:relative; transition:height .5s ease; }
+  .vbar-val { font-size:13px; font-weight:700; }
+  .vbar-label { font-size:11px; color:var(--gray-500); text-align:center; max-width:80px; }
+
+  /* Ladder */
+  .ladder { display:flex; gap:0; align-items:stretch; }
+  .ladder-step { flex:1; text-align:center; padding:20px 12px; position:relative; border:2px solid var(--gray-200); border-radius:12px; margin-right:-2px; background:#fff; transition:all .2s; }
+  .ladder-step.current { border-color:var(--primary); background:var(--primary-light); z-index:2; box-shadow:0 0 0 4px rgba(108,58,237,.15); }
+  .ladder-step.past { border-color:var(--success); background:var(--success-light); }
+  .ladder-step.future { opacity:.5; }
+  .ladder-step .ls-level { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .ladder-step .ls-role { font-size:11px; color:var(--gray-500); margin-bottom:8px; }
+  .ladder-step .ls-pct { font-size:20px; font-weight:700; }
+  .ladder-step .ls-tag { font-size:10px; padding:2px 8px; border-radius:100px; margin-top:6px; display:inline-block; }
+  .ladder-arrow { display:flex; align-items:center; font-size:18px; color:var(--gray-300); padding:0 4px; }
+
+  /* Heatmap */
+  .heatmap-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .heatmap-table th { padding:8px 10px; font-weight:600; color:var(--gray-500); font-size:11px; text-align:center; border-bottom:1px solid var(--gray-200); }
+  .heatmap-table th:first-child { text-align:left; }
+  .heatmap-table td { padding:8px 10px; text-align:center; border-bottom:1px solid var(--gray-100); }
+  .heatmap-table td:first-child { text-align:left; font-weight:500; color:var(--gray-700); }
+  .hm-cell { display:inline-block; width:36px; height:24px; border-radius:4px; line-height:24px; font-size:10px; font-weight:600; color:#fff; }
+
+  /* Readiness bar */
+  .rb-wrap { max-width:600px; }
+  .rb-bar { height:24px; border-radius:12px; background:var(--gray-200); position:relative; overflow:hidden; }
+  .rb-fill { height:100%; border-radius:12px; transition:width .6s ease; position:relative; }
+  .rb-zones { display:flex; position:relative; height:24px; border-radius:12px; overflow:hidden; margin-bottom:8px; }
+  .rb-zone { height:100%; }
+  .rb-marker { position:absolute; top:-4px; width:3px; height:32px; background:var(--gray-900); border-radius:2px; z-index:2; }
+  .rb-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--gray-400); margin-bottom:4px; }
+  .rb-current { font-size:28px; font-weight:700; margin-top:12px; }
+  .rb-detail { font-size:13px; color:var(--gray-500); margin-top:4px; }
+
+  /* Wheel */
+  .wheel-wrap { display:flex; align-items:center; gap:40px; }
+  .wheel-legend { font-size:12.5px; }
+  .wheel-legend-item { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .wheel-legend-color { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<h1>Визуализация «Готовность к переходу»</h1>
+<p class="subtitle">6 вариантов отображения skill-based оценки карьерной готовности</p>
+
+<!-- 1. Gauge + Bars (текущий) -->
+<div class="variant">
+  <div class="variant-title">1. Gauge + горизонтальные бары <span class="variant-tag tag-pro">Текущий</span></div>
+  <div class="variant-desc">Круговая диаграмма общего % + 5 компетенций с прогресс-барами. Классический仪表盘 подход.</div>
+  <div class="gauge-center">
+    <div class="gauge">
+      <svg viewBox="0 0 120 120">
+        <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+        <circle class="gauge-fill" cx="60" cy="60" r="50" stroke="var(--primary)" stroke-dasharray="314" stroke-dashoffset="132"/>
+      </svg>
+      <div class="gauge-label">
+        <div class="gauge-value" style="color:var(--primary);">58%</div>
+        <div class="gauge-text">готовность</div>
+      </div>
+    </div>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-name">Assessment / AC / DC</div><div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--success);"></div></div><div class="bar-pct" style="color:var(--success);">70%</div></div>
+      <div class="bar-row"><div class="bar-name">Проектное управление</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--warning);"></div></div><div class="bar-pct" style="color:var(--warning);">55%</div></div>
+      <div class="bar-row"><div class="bar-name">Методология оценки</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--primary);"></div></div><div class="bar-pct" style="color:var(--primary);">60%</div></div>
+      <div class="bar-row"><div class="bar-name">Аналитика данных</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--warning);"></div></div><div class="bar-pct" style="color:var(--warning);">45%</div></div>
+      <div class="bar-row"><div class="bar-name">Коммуникация со стейкхолдерами</div><div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--primary);"></div></div><div class="bar-pct" style="color:var(--primary);">65%</div></div>
+    </div>
+  </div>
+  <div class="pros-cons">
+    <div><h4 style="color:var(--success);">Плюсы</h4><ul><li>Знакомый паттерн仪表盘</li><li>Видно и общее, и детали</li><li>Легко читается</li></ul></div>
+    <div><h4 style="color:var(--danger);">Минусы</h4><ul><li>Много горизонтального пространства</li><li>Не видно «форму» профиля</li><li>5 баров — потолок читаемости</li></ul></div>
+  </div>
+</div>
+
+<!-- 2. Radar -->
+<div class="variant">
+  <div class="variant-title">2. Radar-диаграмма (паутина)</div>
+  <div class="variant-desc">Пятиугольник: каждая вершина — компетенция. Форма полигона показывает «силуэт» профиля. Вытянутый к вершине = сильная сторона, впалый = слабая.</div>
+  <div class="radar-wrap">
+    <svg viewBox="0 0 300 300" width="280" height="280">
+      <!-- Grid -->
+      <polygon points="150,30 264,112 220,252 80,252 36,112" fill="none" stroke="var(--gray-200)" stroke-width="1"/>
+      <polygon points="150,60 234,124 200,232 100,232 66,124" fill="none" stroke="var(--gray-200)" stroke-width="1"/>
+      <polygon points="150,90 204,136 180,212 120,212 96,136" fill="none" stroke="var(--gray-200)" stroke-width="1"/>
+      <polygon points="150,120 174,148 160,192 140,192 126,148" fill="none" stroke="var(--gray-200)" stroke-width="1"/>
+      <!-- Axes -->
+      <line x1="150" y1="150" x2="150" y2="30" stroke="var(--gray-200)" stroke-width="1"/>
+      <line x1="150" y1="150" x2="264" y2="112" stroke="var(--gray-200)" stroke-width="1"/>
+      <line x1="150" y1="150" x2="220" y2="252" stroke="var(--gray-200)" stroke-width="1"/>
+      <line x1="150" y1="150" x2="80" y2="252" stroke="var(--gray-200)" stroke-width="1"/>
+      <line x1="150" y1="150" x2="36" y2="112" stroke="var(--gray-200)" stroke-width="1"/>
+      <!-- Data polygon: 70%,55%,60%,45%,65% -->
+      <polygon points="150,54 223,124 192,236 98,214 68,128" fill="rgba(108,58,237,.15)" stroke="var(--primary)" stroke-width="2.5"/>
+      <!-- Data dots -->
+      <circle cx="150" cy="54" r="5" fill="var(--primary)"/>
+      <circle cx="223" cy="124" r="5" fill="var(--primary)"/>
+      <circle cx="192" cy="236" r="5" fill="var(--primary)"/>
+      <circle cx="98" cy="214" r="5" fill="var(--primary)"/>
+      <circle cx="68" cy="128" r="5" fill="var(--primary)"/>
+      <!-- Labels -->
+      <text x="150" y="18" text-anchor="middle" font-size="11" fill="var(--gray-600)" font-family="var(--font)">Assessment 70%</text>
+      <text x="278" y="112" text-anchor="start" font-size="11" fill="var(--gray-600)" font-family="var(--font)">Проекты 55%</text>
+      <text x="228" y="264" text-anchor="start" font-size="11" fill="var(--gray-600)" font-family="var(--font)">Методология 60%</text>
+      <text x="72" y="264" text-anchor="end" font-size="11" fill="var(--gray-600)" font-family="var(--font)">Аналитика 45%</text>
+      <text x="22" y="112" text-anchor="end" font-size="11" fill="var(--gray-600)" font-family="var(--font)">Коммуникация 65%</text>
+    </svg>
+    <div class="radar-legend">
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px;">Профиль компетенций</div>
+      <div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--success);"></div><div class="radar-legend-pct">70%</div> Assessment / AC / DC</div>
+      <div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--warning);"></div><div class="radar-legend-pct">55%</div> Проектное управление</div>
+      <div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--primary);"></div><div class="radar-legend-pct">60%</div> Методология оценки</div>
+      <div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--danger);"></div><div class="radar-legend-pct">45%</div> Аналитика данных</div>
+      <div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--primary);"></div><div class="radar-legend-pct">65%</div> Коммуникация</div>
+      <div style="margin-top:16px;padding:10px;background:var(--primary-light);border-radius:8px;font-size:12px;color:var(--primary);">
+        💡 Видно: сила — Assessment, слабость — Аналитика
+      </div>
+    </div>
+  </div>
+  <div class="pros-cons">
+    <div><h4 style="color:var(--success);">Плюсы</h4><ul><li>Сразу видна «форма» профиля</li><li>Красиво и современно</li><li>Легко сравнить 2 профиля (наложить)</li></ul></div>
+    <div><h4 style="color:var(--danger);">Минусы</h4><ul><li>Трудно точно прочитать %</li><li>При 6+ компетенциях путает</li><li>Не показывает общий %</li></ul></div>
+  </div>
+</div>
+
+<!-- 3. Vertical bars -->
+<div class="variant">
+  <div class="variant-title">3. Вертикальные столбцы (гистограмма)</div>
+  <div class="variant-desc">5 столбцов разной высоты. Самый простой и читаемый формат. Цвет кодирует зону: зелёный ≥70%, фиолетовый 50–69%, жёлтый <50%.</div>
+  <div class="vbars">
+    <div class="vbar">
+      <div class="vbar-val" style="color:var(--success);">70%</div>
+      <div class="vbar-col" style="height:140px;background:var(--success);"></div>
+      <div class="vbar-label">Assessment</div>
+    </div>
+    <div class="vbar">
+      <div class="vbar-val" style="color:var(--warning);">55%</div>
+      <div class="vbar-col" style="height:110px;background:var(--warning);"></div>
+      <div class="vbar-label">Проекты</div>
+    </div>
+    <div class="vbar">
+      <div class="vbar-val" style="color:var(--primary);">60%</div>
+      <div class="vbar-col" style="height:120px;background:var(--primary);"></div>
+      <div class="vbar-label">Методология</div>
+    </div>
+    <div class="vbar">
+      <div class="vbar-val" style="color:var(--danger);">45%</div>
+      <div class="vbar-col" style="height:90px;background:var(--danger);"></div>
+      <div class="vbar-label">Аналитика</div>
+    </div>
+    <div class="vbar">
+      <div class="vbar-val" style="color:var(--primary);">65%</div>
+      <div class="vbar-col" style="height:130px;background:var(--primary);"></div>
+      <div class="vbar-label">Коммуникация</div>
+    </div>
+  </div>
+  <div class="pros-cons">
+    <div><h4 style="color:var(--success);">Плюсы</h4><ul><li>Максимально просто и наглядно</li><li>Легко сравнивать столбцы</li><li>Цвет сразу кодирует проблему</li></ul></div>
+    <div><h4 style="color:var(--danger);">Минусы</h4><ul><li>Нет общего %</li><li>Занимает много вертикального места</li><li>Не показывает «"profile shape»</li></ul></div>
+  </div>
+</div>
+
+<!-- 4. Ladder / Career ladder -->
+<div class="variant">
+  <div class="variant-title">4. Карьерная лестница (ступени)</div>
+  <div class="variant-desc">Визуализация уровней должности: пройденные шаги подсвечены, текущий выделен, будущие полупрозрачны. Показывает дистанцию до цели.</div>
+  <div class="ladder">
+    <div class="ladder-step past">
+      <div class="ls-level">Junior</div>
+      <div class="ls-role">Младший специалист</div>
+      <div class="ls-pct" style="color:var(--success);">✓</div>
+      <div class="ls-tag" style="background:var(--success-light);color:var(--success);">Пройдено</div>
+    </div>
+    <div class="ladder-arrow">→</div>
+    <div class="ladder-step past">
+      <div class="ls-level">Middle</div>
+      <div class="ls-role">Специалист</div>
+      <div class="ls-pct" style="color:var(--success);">✓</div>
+      <div class="ls-tag" style="background:var(--success-light);color:var(--success);">Пройдено</div>
+    </div>
+    <div class="ladder-arrow">→</div>
+    <div class="ladder-step current">
+      <div class="ls-level">Senior</div>
+      <div class="ls-role">Старший специалист</div>
+      <div class="ls-pct" style="color:var(--primary);">58%</div>
+      <div class="ls-tag" style="background:var(--primary-light);color:var(--primary);">Текущий的目标</div>
+    </div>
+    <div class="ladder-arrow">→</div>
+    <div class="ladder-step future">
+      <div class="ls-level">Lead</div>
+      <div class="ls-role">Руководитель направления</div>
+      <div class="ls-pct" style="color:var(--gray-400);">—</div>
+      <div class="ls-tag" style="background:var(--gray-100);color:var(--gray-400);">Следующий</div>
+    </div>
+    <div class="ladder-arrow">→</div>
+    <div class="ladder-step future">
+      <div class="ls-level">Head</div>
+      <div class="ls-role">Директор</div>
+      <div class="ls-pct" style="color:var(--gray-400);">—</div>
+      <div class="ls-tag" style="background:var(--gray-100);color:var(--gray-400);">Перспектива</div>
+    </div>
+  </div>
+  <div class="pros-cons">
+    <div><h4 style="color:var(--success);">Плюсы</h4><ul><li>Понятная метафора «лестницы»</li><li>Видна дистанция до цели</li><li>Мотивирует: «осталось 2 шага»</li></ul></div>
+    <div><h4 style="color:var(--danger);">Минусы</h4><ul><li>Не показывает навыки</li><li>Только для вертикального роста</li><li>Субъективная оценка «где ты»</li></ul></div>
+  </div>
+</div>
+
+<!-- 5. Heatmap -->
+<div class="variant">
+  <div class="variant-title">5. Тепловая карта навыков</div>
+  <div class="variant-desc">Матрица: строки — навыки, столбцы — уровни зрелости. Цвет ячейки показывает, насколько навык соответствует каждому уровню.</div>
+  <table class="heatmap-table">
+    <thead>
+      <tr><th>Навык</th><th>Базовый</th><th>Средний</th><th>Продвинутый</th><th>Эксперт</th><th>Стратегия</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Assessment / AC / DC</td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--primary);">●</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+      </tr>
+      <tr>
+        <td>Проектное управление</td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--primary);">●</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+      </tr>
+      <tr>
+        <td>Методология оценки</td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+      </tr>
+      <tr>
+        <td>Аналитика данных</td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--warning);">◐</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+      </tr>
+      <tr>
+        <td>Коммуникация</td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--success);">✓</span></td>
+        <td><span class="hm-cell" style="background:var(--primary);">●</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+        <td><span class="hm-cell" style="background:var(--gray-200);color:var(--gray-400);">—</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--gray-500);">
+    <span><span class="hm-cell" style="background:var(--success);width:16px;height:16px;font-size:8px;">✓</span> Освоено</span>
+    <span><span class="hm-cell" style="background:var(--primary);width:16px;height:16px;font-size:8px;">●</span> Развивается</span>
+    <span><span class="hm-cell" style="background:var(--warning);width:16px;height:16px;font-size:8px;">◐</span> Базовый</span>
+    <span><span class="hm-cell" style="background:var(--gray-200);width:16px;height:16px;font-size:8px;color:var(--gray-400);">—</span> Не начато</span>
+  </div>
+  <div class="pros-cons">
+    <div><h4 style="color:var(--success);">Плюсы</h4><ul><li>Видна глубина каждого навыка</li><li>Понятно, какой уровень нужен</li><li>Можно добавить требуемый уровень</li></ul></div>
+    <div><h4 style="color:var(--danger);">Минусы</h4><ul><li>Перегружена при 6+ навыках</li><li>Нет общего %</li><li>Сложно определить «текущий уровень»</li></ul></div>
+  </div>
+</div>
+
+<!-- 6. Readiness bar -->
+<div class="variant">
+  <div class="variant-title">6. Readiness-бар (одна шкала)</div>
+  <div class="variant-desc">Один горизонтальный бар с цветными зонами: красная (0–40%), жёлтая (40–70%), зелёная (70–100%). Маркер показывает текущую позицию.</div>
+  <div class="rb-wrap">
+    <div class="rb-labels">
+      <span>0%</span><span>Не готов</span><span>Частично</span><span>Готов</span><span>100%</span>
+    </div>
+    <div style="position:relative;">
+      <div class="rb-zones">
+        <div class="rb-zone" style="width:40%;background:var(--danger-light);"></div>
+        <div class="rb-zone" style="width:30%;background:var(--warning-light);"></div>
+        <div class="rb-zone" style="width:30%;background:var(--success-light);"></div>
+      </div>
+      <div class="rb-marker" style="left:calc(58% - 1.5px);"></div>
+    </div>
+    <div class="rb-current" style="color:var(--primary);">58% <span style="font-size:14px;font-weight:400;color:var(--gray-500);">— частично готов</span></div>
+    <div class="rb-detail">Нужно закрыть пробелы: Аналитика данных (45%), Проектное управление (55%)</div>
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <div style="flex:1;padding:12px;background:var(--danger-light);border-radius:8px;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--danger);">1</div>
+        <div style="font-size:11px;color:var(--gray-500);">Красная зона</div>
+        <div style="font-size:10px;color:var(--gray-400);">Критические пробелы</div>
+      </div>
+      <div style="flex:1;padding:12px;background:var(--warning-light);border-radius:8px;text-align:center;border:2px solid var(--warning);">
+        <div style="font-size:20px;font-weight:700;color:var(--warning);">2</div>
+        <div style="font-size:11px;color:var(--gray-500);">Жёлтая зона ← вы здесь</div>
+        <div style="font-size:10px;color:var(--gray-400);">Нужна практика</div>
+      </div>
+      <div style="flex:1;padding:12px;background:var(--success-light);border-radius:8px;text-align:center;">
+        <div style="font-size:20px;font-weight:700;color:var(--success);">2</div>
+        <div style="font-size:11px;color:var(--gray-500);">Зелёная зона</div>
+        <div style="font-size:10px;color:var(--gray-400);">Готов к роли</div>
+      </div>
+    </div>
+  </div>
+  <div class="pros-cons">
+    <div><h4 style="color:var(--success);">Плюсы</h4><ul><li>Минималистично, фокус на одном числе</li><li>Цветные зоны интуитивны</li><li>Мотивирует дойти до зелёной</li></ul></div>
+    <div><h4 style="color:var(--danger);">Минусы</h4><ul><li>Теряется детализация по навыкам</li><li>Одно число — обманчиво просто</li><li>Не помогает выбрать, что развивать</li></ul></div>
+  </div>
+</div>
+
+</body>
+</html>

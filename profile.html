@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карьерный GPS — Профиль</title>
+<style>
+:root {
+  --primary: #6C3AED; --primary-hover: #5B21B6; --primary-light: #EDE9FE; --primary-dark: #4C1D95;
+  --success: #059669; --success-light: #D1FAE5;
+  --orange: #F97316; --orange-light: #FFF7ED;
+  --warning: #D97706; --warning-light: #FEF3C7;
+  --danger: #DC2626; --danger-light: #FEE2E2;
+  --info: #0EA5E9; --info-light: #E0F2FE;
+  --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-300:#D1D5DB;--gray-400:#9CA3AF;
+  --gray-500:#6B7280;--gray-600:#4B5563;--gray-700:#374151;--gray-800:#1F2937;--gray-900:#111827;
+  --radius:14px; --radius-sm:10px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 14px rgba(0,0,0,.08);
+  --font:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:#F0F2F5;color:var(--gray-900);min-height:100vh;}
+
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:10;}
+.topbar-logo{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;color:var(--primary-dark);}
+.topbar-logo .icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#A78BFA);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-right button{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--gray-200);background:#fff;font-size:13px;cursor:pointer;font-family:var(--font);color:var(--gray-600);}
+.topbar-right button:hover{background:var(--gray-50);}
+
+.container{width:1200px;margin:0 auto;padding:28px 24px 0;}
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px 24px 12px;margin-bottom:10px;}
+.card:hover{box-shadow:var(--shadow-md);}
+.card-title{font-size:18px;font-weight:700;color:var(--gray-800);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-subtitle{font-size:18px;color:var(--gray-800);font-weight:700;margin-left:4px;}
+
+.btn{padding:8px 18px;border-radius:var(--radius-sm);border:none;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--primary);color:#fff;}.btn-primary:hover{background:var(--primary-hover);}
+.btn-outline{background:transparent;color:var(--gray-600);border:1px solid var(--gray-300);}.btn-outline:hover{background:var(--gray-50);border-color:var(--gray-400);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:11.5px;font-weight:500;}
+.badge.purple{background:var(--primary-light);color:var(--primary);}
+.badge.green{background:var(--success-light);color:var(--success);}
+.badge.orange{background:var(--orange-light);color:var(--orange);}
+.badge.blue{background:var(--info-light);color:var(--info);}
+.badge.gray{background:var(--gray-100);color:var(--gray-600);}
+.badge.red{background:var(--danger-light);color:var(--danger);}
+
+.progress-bar{height:7px;background:var(--gray-200);border-radius:4px;overflow:hidden;margin:6px 0;}
+.progress-bar .fill{height:100%;border-radius:4px;transition:width .5s ease;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.section-label{font-size:12px;font-weight:600;color:var(--gray-800);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;}
+
+/* PROFILE */
+.profile-header{display:flex;gap:24px;align-items:flex-start;}
+.profile-photo{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--primary-light),#DDD6FE);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;border:3px solid #fff;box-shadow:var(--shadow-md);}
+.profile-photo .initials{font-size:32px;font-weight:700;color:var(--primary);}
+.profile-photo .edit-badge{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:2px solid #fff;}
+.profile-info{flex:1;}
+.profile-name{font-size:24px;font-weight:700;color:var(--gray-900);}
+.profile-meta{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;}
+.profile-meta-item{font-size:13.5px;color:var(--gray-500);display:flex;align-items:center;gap:4px;}
+.profile-meta-item strong{color:var(--gray-700);font-weight:600;}
+select.field{padding:8px 14px;border:1px solid var(--gray-300);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font);color:var(--gray-700);background:#fff;cursor:pointer;outline:none;appearance:auto;}
+select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light);}
+
+/* HORIZONTAL LADDER */
+.h-ladder{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:8px 0 16px 0;position:relative;}
+.h-ladder::before{content:'';position:absolute;top:32px;left:24px;right:24px;height:3px;background:var(--gray-200);border-radius:2px;z-index:0;}
+.h-ladder-node{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0;flex:1;z-index:1;cursor:pointer;}
+.h-ladder-dot{width:16px;height:16px;border-radius:50%;background:var(--gray-300);border:3px solid #fff;box-shadow:0 0 0 2px var(--gray-300);margin-bottom:10px;transition:all .2s;position:relative;z-index:2;flex-shrink:0;}
+.h-ladder-node.target .h-ladder-dot{background:var(--gray-400);box-shadow:0 0 0 2px var(--gray-400),0 0 0 6px rgba(156,163,175,.12);}
+.h-ladder-node.active .h-ladder-dot{background:var(--primary);box-shadow:0 0 0 2px var(--primary),0 0 0 6px rgba(108,58,237,.15);}
+.h-ladder-node.alt-node .h-ladder-dot{background:var(--orange);box-shadow:0 0 0 2px var(--orange),0 0 0 6px rgba(249,115,22,.12);}
+.h-ladder-node.current .h-ladder-dot{background:var(--success);box-shadow:0 0 0 2px var(--success),0 0 0 6px rgba(5,150,105,.15);}
+.h-ladder-card{background:#fff;border:2px solid var(--gray-200);border-radius:var(--radius-sm);padding:14px;text-align:center;width:100%;transition:all .2s;box-shadow:var(--shadow);flex:1;display:flex;flex-direction:column;justify-content:flex-start;}
+.h-ladder-node:hover .h-ladder-card{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.h-ladder-node.current .h-ladder-card{background:#ECFDF5;border-color:#A7F3D0;}
+.h-ladder-node.current:hover .h-ladder-card{border-color:#A7F3D0;box-shadow:none;cursor:default;}
+.h-ladder-node.selected .h-ladder-card{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light),var(--shadow-md);background:var(--primary-light);}
+.h-ladder-card .hl-title{font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px;line-height:1.3;}
+.h-ladder-card .hl-desc{font-size:11px;color:var(--gray-500);margin-top:4px;line-height:1.4;}
+.h-ladder-card .hl-pct{font-size:20px;font-weight:700;margin-top:auto;}
+.h-ladder-card .hl-sub{font-size:11px;color:var(--gray-400);margin-top:2px;}
+.h-ladder-card .hl-tag{margin-bottom:4px;}
+
+/* PLAN CARDS (expandable) */
+.plan-card{border:2px solid var(--gray-200);border-radius:var(--radius);padding:20px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer;}
+.plan-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.plan-card.selected{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light),var(--shadow-md);background:var(--primary-light);}
+.plan-card .plan-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.plan-card .plan-tag{margin-bottom:6px;}
+.plan-card .plan-title{font-size:16px;font-weight:600;color:var(--gray-800);}
+.plan-card .plan-desc{font-size:13.5px;color:var(--gray-500);line-height:1.55;margin-top:8px;}
+.plan-card .plan-pct{font-size:26px;font-weight:700;min-width:50px;text-align:right;}
+
+/* RADAR */
+.radar-section{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.radar-svg-wrap{display:flex;justify-content:center;}
+.radar-legend-item{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:8px 12px;border-radius:var(--radius-sm);background:var(--gray-50);transition:background .15s;cursor:pointer;}
+.radar-legend-item:hover{background:var(--primary-light);}
+.radar-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.radar-legend-name{flex:1;font-size:13.5px;color:var(--gray-700);}
+.radar-legend-pct{font-size:13px;font-weight:700;min-width:40px;text-align:right;}
+.radar-legend-target{font-size:11px;color:var(--gray-400);min-width:40px;text-align:right;}
+
+/* SKILLS */
+.skill-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:13.5px;font-weight:500;margin:3px 4px 3px 0;transition:all .2s;}
+.skill-chip.has{background:var(--success-light);color:#065F46;}
+.skill-chip.miss{background:var(--danger-light);color:#991B1B;}
+.skill-chip .chip-icon{font-size:11px;}
+.skills-group{margin-bottom:16px;}
+.skills-group-title{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+
+/* VACANCIES */
+.vac-card{border:1px solid var(--gray-200);border-radius:var(--radius);padding:18px;transition:all .2s;}
+.vac-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.vac-card .vac-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.vac-card .vac-title{font-size:15px;font-weight:600;}
+.vac-card .vac-match{font-size:24px;font-weight:700;}
+.vac-card .vac-meta{font-size:12px;color:var(--gray-500);display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.vac-card .vac-skills{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.vac-card .vac-skill{font-size:10.5px;padding:2px 8px;border-radius:100px;}
+.vac-card .vac-skill.ok{background:var(--success-light);color:var(--success);}
+.vac-card .vac-skill.no{background:var(--gray-100);color:var(--gray-500);}
+.vac-card .vac-exp{margin-left:auto;font-size:10.5px;color:var(--gray-500);background:var(--gray-100);padding:2px 10px;border-radius:100px;white-space:nowrap;align-self:center;}
+.match-bar{width:100%;height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden;}
+.match-bar .fill{height:100%;border-radius:3px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;justify-content:center;align-items:center;padding:24px;}
+.modal-overlay.active{display:flex;}
+.modal{background:#fff;border-radius:var(--radius);width:100%;max-width:700px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--gray-200);}
+.modal-header h3{font-size:17px;font-weight:700;color:var(--gray-800);margin:0;}
+.modal-close{width:32px;height:32px;border-radius:8px;border:none;background:var(--gray-100);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-500);}
+.modal-close:hover{background:var(--gray-200);}
+.modal-body{padding:24px;overflow-y:auto;flex:1;font-size:13.5px;line-height:1.6;color:var(--gray-700);}
+.modal-body h4{font-size:14px;font-weight:700;color:var(--gray-800);margin:16px 0 8px;}
+.modal-body h4:first-child{margin-top:0;}
+.modal-body ul{padding-left:20px;margin:4px 0 12px;}
+.modal-body li{margin-bottom:4px;}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid var(--gray-200);}
+
+/* COUNTER FAB */
+.counter-fab{position:fixed;bottom:24px;right:24px;z-index:90;width:40px;height:40px;border-radius:10px;background:var(--gray-100);color:var(--gray-400);border:1px solid var(--gray-200);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.counter-fab:hover{background:var(--gray-200);color:var(--gray-600);border-color:var(--gray-300);}
+.counter-fab .counter-badge{position:absolute;top:-4px;right:-4px;background:var(--gray-400);color:#fff;font-size:10px;font-weight:600;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+.counter-popup{position:fixed;bottom:72px;right:24px;z-index:90;background:#fff;border-radius:var(--radius);box-shadow:0 8px 30px rgba(0,0,0,.12);padding:16px 20px;width:210px;display:none;font-size:13px;color:var(--gray-700);border:1px solid var(--gray-200);}
+.counter-popup.active{display:block;}
+.counter-popup .cp-title{font-weight:600;color:var(--gray-600);margin-bottom:10px;font-size:12px;}
+.counter-popup .cp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.counter-popup .cp-val{font-weight:700;font-size:16px;color:var(--gray-700);}
+.counter-popup .cp-reset{font-size:11px;color:var(--gray-400);cursor:pointer;border:none;background:none;font-family:var(--font);margin-top:6px;}
+.counter-popup .cp-reset:hover{color:var(--danger);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo"><div class="icon">🧭</div>Карьерный GPS</div>
+  <div class="topbar-right"><button>🔔 Уведомления</button><button>❓ Помощь</button></div>
+</div>
+
+<div class="container">
+
+  <!-- 1. PROFILE -->
+  <div class="card">
+    <div class="profile-header">
+      <div class="profile-photo">
+        <span class="initials">АП</span>
+        <div class="edit-badge" title="Загрузить фото">📷</div>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">Алексей Петров</div>
+        <div class="profile-meta">
+          <div class="profile-meta-item">📅 Стаж: <strong>4 года</strong></div>
+          <div class="profile-meta-item">👤 Руководитель: <strong>Мария Иванова</strong></div>
+          <div class="profile-meta-item">🏢 Отдел: <strong>L&D</strong></div>
+        </div>
+        <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <label style="font-size:13px;font-weight:500;color:var(--gray-600);">Текущая должность:</label>
+          <select class="field" id="positionSelect" onchange="updateProfile()">
+            <option value="hrbp">HR BP</option>
+            <option value="teamlead" selected>Тимлид</option>
+            <option value="assessment">Руководитель проектов оценки</option>
+            <option value="director">Директор направления</option>
+            <option value="service">Сервисный инженер</option>
+            <option value="comms">Ведущий инженер связи</option>
+            <option value="sales">Менеджер по продажам 3К</option>
+            <option value="leadSales">Ведущий менеджер по продажам 3К</option>
+            <option value="serviceMgr">Сервис-менеджер 3К</option>
+          </select>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div style="padding:18px 24px 14px;margin-bottom:10px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);">
+    <div style="position:relative;display:flex;align-items:flex-start;justify-content:space-between;padding:0 60px;">
+      <div style="position:absolute;top:14px;left:60px;right:60px;height:3px;background:var(--primary);z-index:0;"></div>
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:0;overflow:visible;">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+        <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--gray-800);text-align:center;line-height:1.3;width:120px;">Изучите навыки для развития</div>
+      </div>
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:0;overflow:visible;">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+        <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--gray-800);text-align:center;line-height:1.3;width:120px;">Выбирайте карьерный трек</div>
+      </div>
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:0;overflow:visible;">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">3</div>
+        <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--gray-800);text-align:center;line-height:1.3;width:120px;">Приступайте к развитию</div>
+      </div>
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;width:0;overflow:visible;">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;">4</div>
+        <div style="margin-top:10px;font-size:12px;font-weight:600;color:var(--gray-800);text-align:center;line-height:1.3;width:120px;">Откликайтесь на вакансию</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SKILLS — full width -->
+  <div class="card" id="skillsCard">
+    <div class="card-title" id="skillsTitle"></div>
+    <div style="font-size:13px;color:var(--gray-400);margin-top:-8px;margin-bottom:16px;">На основе оценки компетенций 2026</div>
+    <div class="grid-2">
+      <div>
+        <div class="skills-group">
+          <div class="skills-group-title" style="color:var(--success);">Сильные стороны</div>
+          <div id="skillsHave"></div>
+        </div>
+      </div>
+      <div>
+        <div class="skills-group-title" style="color:var(--warning);margin-bottom:8px;">Навыки для развития</div>
+        <div class="skills-group">
+          <div class="skills-group-title" style="color:var(--danger);">🔴 Soft skills</div>
+          <div id="skillsRequired"></div>
+        </div>
+        <div class="skills-group">
+          <div class="skills-group-title" style="color:var(--info);">🔵 Hard skills</div>
+          <div id="skillsDesirable"></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:18px;border-top:1px solid var(--gray-200);padding-top:18px;">
+      <div style="background:linear-gradient(135deg,var(--primary-light) 0%,rgba(108,58,237,0.03) 65%);border:1px solid rgba(108,58,237,0.16);border-radius:var(--radius-sm);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--gray-800);">Изучить подробнее результаты оценки</div>
+          <div style="margin-top:4px;font-size:13px;color:var(--gray-500);">Все компетенции отображаются в вашем профиле</div>
+        </div>
+        <span class="btn btn-primary" onclick="openInfoModal();incrementEvalCounter()" style="cursor:pointer;padding:12px 16px;font-size:14px;width:180px;justify-content:center;flex-shrink:0;">Перейти к оценке →</span>
+      </div>
+      <div style="margin-top:14px;border:1px dashed var(--gray-300);border-radius:var(--radius-sm);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--gray-50);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:38px;height:38px;border-radius:10px;background:var(--gray-100);border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:17px;">📄</div>
+          <div>
+            <div style="font-size:13px;color:var(--gray-700);font-weight:600;">Не учли ваш опыт?</div>
+            <div style="font-size:12px;color:var(--gray-400);margin-top:2px;">Загрузите резюме — ИИ возьмёт из него самое важное</div>
+          </div>
+        </div>
+        <span class="btn btn-outline btn-sm" onclick="openInfoModal();incrementResumeCounter()" style="cursor:pointer;padding:12px 16px;font-size:14px;width:180px;justify-content:center;flex-shrink:0;">Загрузить резюме</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. READINESS RADAR + TRACKS -->
+  <div class="card" id="ladderCard" style="height:800px;">
+    <div class="card-title" id="radarTitle">Рекомендованные треки</div>
+    <div style="display:flex;gap:20px;">
+      <div class="radar-section" id="radarSection" style="flex-shrink:0;visibility:hidden;">
+        <div class="radar-svg-wrap"><svg viewBox="0 0 340 340" width="280" height="280" id="radarSvg"></svg></div>
+        <div style="margin:8px 0 16px;" id="developBtns"></div>
+        <div class="radar-legend" id="radarLegend"></div>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div id="careerLadder"></div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px;">
+          <div style="border:1px dashed var(--gray-300);border-radius:var(--radius-sm);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--gray-50);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:38px;height:38px;border-radius:10px;background:var(--gray-100);border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:17px;">💬</div>
+              <div style="font-size:13px;color:var(--gray-700);font-weight:600;">Сомневаетесь в выборе направления?</div>
+            </div>
+            <span class="btn btn-outline btn-sm" onclick="openInfoModal();incrementConsultCounter()" style="cursor:pointer;padding:8px 16px;flex-shrink:0;">Карьерная консультация</span>
+          </div>
+          <div style="border:1px dashed var(--gray-300);border-radius:var(--radius-sm);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--gray-50);">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:38px;height:38px;border-radius:10px;background:var(--gray-100);border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:17px;">🎯</div>
+              <div style="font-size:13px;color:var(--gray-700);font-weight:600;">Хотите построить свой трек?</div>
+            </div>
+            <span class="btn btn-outline btn-sm" onclick="openInfoModal();incrementTrackCounter()" style="cursor:pointer;padding:8px 16px;flex-shrink:0;">Выбрать желаемую роль</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CAREER TRAJECTORIES (скрыт) -->
+  <div class="card" id="trajectoriesCard" style="display:none;">
+    <div class="card-title">🧭 Карьерные траектории</div>
+    <div class="section-label">Основные траектории</div>
+    <div class="grid-2" style="margin-bottom:16px;" id="priorityPlans"></div>
+    <div class="card-title">Смежные направления</div>
+    <div class="grid-2" id="altPlans"></div>
+  </div>
+
+  <!-- 6. VACANCIES -->
+  <div class="card" id="vacanciesCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div class="card-title" style="margin-bottom:0;">💼 Рекомендованные вакансии</div>
+      <span class="btn btn-outline btn-sm" onclick="openInfoModal();incrementVacsCounter()" style="cursor:pointer;">Посмотреть все вакансии →</span>
+    </div>
+    <div class="grid-2" id="vacancies"></div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="planModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📄 План развития</h3>
+      <button class="modal-close" onclick="closePlanModal()">✕</button>
+    </div>
+    <div class="modal-body" id="planModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closePlanModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="infoModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>💡 Информация</h3>
+      <button class="modal-close" onclick="closeInfoModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      Спасибо за интерес! Этот функционал еще в разработке, мы добавим его к следующей версии прототипа.
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeInfoModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="counter-popup" id="counterPopup">
+  <div class="cp-title">📊 Статистика</div>
+  <div class="cp-row"><span>Начало развития:</span><span class="cp-val" id="devCount">0</span></div>
+  <div class="cp-row"><span>Переход к оценке:</span><span class="cp-val" id="evalCount">0</span></div>
+  <div class="cp-row"><span>Загрузка резюме:</span><span class="cp-val" id="resumeCount">0</span></div>
+  <div class="cp-row"><span>Карьерная консультация:</span><span class="cp-val" id="consultCount">0</span></div>
+  <div class="cp-row"><span>Выбор желаемой роли:</span><span class="cp-val" id="trackCount">0</span></div>
+  <div class="cp-row"><span>Просмотр вакансий:</span><span class="cp-val" id="vacsCount">0</span></div>
+  <button class="cp-reset" onclick="resetCounters()">Сбросить счётчик</button>
+</div>
+<button class="counter-fab" id="counterFab" onclick="toggleCounter()">📊<span class="counter-badge" id="counterBadge">0</span></button>
+
+<script>
+var skillTips={
+'Лидерство':'Возьмите инициативу в проекте или проведите тренинг для коллег',
+'Контроль качества':'Изучите ISO 9001 и внедрите чек-листы проверки',
+'Обучение персонала':'Проведите серию воркшопов и получите обратную связь',
+'Проектное управление':'Пройдите курс PMP/Prince2 и примените на текущем проекте',
+'Аналитика':'Освойте Excel на продвинутом уровне или изучите Power BI',
+'Наставничество':'Найдите наставника в компании или пройдите программу менторинга',
+'Управление персоналом':'Изучите основы HR-менеджмента и применяйте на практике',
+'SLA':'Изучите методику расчёта и контроля服务水平 agreements',
+'Мотивация':'Пройдите курс по управлению мотивацией и применяйте разные подходы',
+'Сетевые технологии':'Пройдите курс CCNA или аналогичный по сетевым технологиям',
+'Мониторинг':'Освойте Zabbix/Grafana и настройте дашборды',
+'Тикетные системы':'Изучите ITIL-процессы и освойте Jira/ServiceNow',
+'Серверное администрирование':'Практикуйтесь на домашней лаборатории или в облаке',
+'Автоматизация':'Изучите скрипты Python/Bash для автоматизации рутинных задач',
+'Документирование':'Создавайте шаблоны документации и ведите базу знаний',
+'Cisco/HP':'Пройдите сертификацию Cisco CCNA или HP ASE',
+'Маршрутизация':'Изучите протоколы OSPF/BGP на практике в лаборатории',
+'VPN':'Настройте VPN-туннель на домашнем оборудовании или в облаке',
+'Firewall':'Изучите правила файрвола и практикуйтесь на лабораторном стенде',
+'Коммуникация':'Участвуйте в публичных выступлениях и тренируйте активное слушание',
+'Диагностика':'Составьте чек-листы диагностики и отрабатывайте на инцидентах',
+'Техническая экспертиза':'Изучите техническую документацию и применяйте на практике',
+'CRM':'Пройдите обучение по CRM и ведите все сделки через неё',
+'Метрики':'Настройте дашборды с ключевыми метриками и анализируйте еженедельно',
+'Стратегия':'Изучите методики стратегического планирования BSC, OKR',
+'Бюджетирование':'Пройдите курс по финансовому планированию и ведите бюджет проекта',
+'Менторинг':'Найдите ментора или станьте ментором для коллеги',
+'Переговоры':'Пройдите тренинг по переговорам и отрабатывайте на встречах',
+'HR-право':'Изучите ТК РФ и кадровое делопроизводство через онлайн-курс',
+'Масштабирование':'Изучите подходы к масштабированию процессов и команд',
+'Интеграция с бизнесом':'Участвуйте в бизнес-встречах и изучайте потребности бизнеса',
+'Системное видение':'Изучите системный подход и применяйте в планировании',
+'Assessment':'Пройдите обучение методикам AC/DC и проведите оценку коллеги',
+'Методология':'Изучите стандартные методологии и адаптируйте под свою команду',
+'Стейкхолдеры':'Наладьте регулярную коммуникацию со всеми заинтересованными сторонами',
+'Дизайн обучения':'Освойте ADDIE/SAM модели и создайте свой первый учебный модуль',
+'Стандарты':'Изучите отраслевые стандарты и внедрите в рабочие процессы',
+'Качество':'Внедрите процессы контроля качества и получите обратную связь',
+'Фасилитация':'Пройдите курс фасилитации и проводите встречи по новой методике',
+'Управление знаниями':'Создайте базу знаний и наладите процессы обмена опытом',
+'Организационный дизайн':'Изучите методики проектирования организационных структур',
+'Трансформация процессов':'Пройдите курс по BPM и внедрите реинжиниринг процесса',
+'Талант-менеджмент':'Изучите программы развития талантов и лидерские треки',
+'Корпоративная культура':'Изучите методики диагностики и развития корпоративной культуры',
+'HRIS':'Освойте HR-информационную систему 1С или SAP HR',
+'Процессы':'Оптимизируйте текущий процесс и документируйте изменения',
+'Compliance':'Изучите требования compliance и проведите аудит текущих процессов',
+'People Analytics':'Освойте инструменты people analytics и создайте первый дашборд',
+'Статистика':'Пройдите курс по статистике и применяйте в анализе данных',
+'Дашборды':'Создайте интерактивный дашборд в Power BI или Tableau',
+'Визуализация':'Изучите принципы визуализации данных и применяйте в отчётах',
+'Таланты':'Разработайте программу выявления и развития талантов',
+'Преемственность':'Создайте план преемственности для ключевых позиций',
+'Финансы':'Пройдите курс по финансовому менеджменту для руководителей',
+'Глобальная стратегия':'Изучите методики разработки глобальной HR-стратегии',
+'Бренд работодателя':'Запустите программу бренда работодателя в соцсетях',
+'Планирование штата':'Освойте методику workforce planning и применяйте для подразделения',
+'Управление изменениями':'Пройдите курс ADKAR или Kotter по управлению изменениями',
+'Стратегия бизнеса':'Изучите бизнес-моделирование и стратегический менеджмент',
+'Лидерство уровня C':'Развивайте навыки C-level leadership через executive coaching',
+'Корпоративное управление':'Изучите принципы корпоративного управления CG',
+'Видение':'Развивайте стратегическое видение через анализ трендов отрасли',
+'Стратегия обучения':'Разработайте L&D-стратегию на основе потребностей бизнеса',
+'EdTech':'Изучите EdTech-платформы и внедрите элементы дистанционного обучения',
+'Корпоративный университет':'Спроектируйте модель корпоративного университета для компании',
+'Понимание бизнеса':'Участвуйте в бизнес-совещаниях и изучайте финансовую отчётность',
+'Управление талантами':'Внедрите 9-box grid и программу развития талантов',
+'HR-дашборды и метрики':'Настройте HR-дашборды с ключевыми метриками turnover time-to-hire',
+'Стратегический консалтинг':'Практикуйте консультирование бизнес-лидеров по HR-вопросам',
+'Преемственность руководителей':'Создайте пул преемственников для руководящих позиций',
+'Бюджетирование HR':'Ведите HR-бюджет и обосновывайте ROI обучения',
+'ROI обучения':'Изучите модель Киркпатрика для оценки эффективности обучения',
+'Валидация инструментов':'Проведите валидацию оценочных инструментов на выборке',
+'Презентация результатов':'Подготовьте шаблон презентации результатов для руководства',
+'Бюджетирование проектов':'Составьте бюджет проекта оценки и контролируйте расходы',
+'Управление оценщиками':'Разработайте инструкции для оценщиков и проведите обучение',
+'Разработка методик AC/DC':'Создайте методику AC на основе международных стандартов',
+'Статистика и аналитика оценки':'Освойте статистические методы анализа результатов оценки',
+'Работа с ATS/HRIS':'Настройте интеграцию ATS с HRIS и автоматизируйте процессы',
+'Проектирование ВОЛС':'Изучите нормативы проектирования ВОЛС и выполните тестовый проект',
+'Расчёт решений':'Освойте калькуляторы стоимости телекоммуникационных решений',
+'Техническая документация':'Составьте комплект технической документации для проекта',
+'CAD/САПР':'Освойте AutoCAD или Compass для проектирования сетей',
+'Нормативы':'Изучите отраслевые нормативные документы по проектированию',
+'Управление командой':'Проведите тимбилдинг и внедрите регулярные 1-на-1 встречи',
+'Эксплуатация сети':'Изучите процессы эксплуатации и наладите мониторинг',
+'Организация работ':'Составьте чек-листы организации работ и применяйте их',
+'Руководство подразделениями':'Изучите методы руководства крупными подразделениями',
+'Обслуживание абонентов':'Внедрите стандарты обслуживания и контролируйте качество',
+'Серверы':'Практикуйтесь на серверном оборудовании или в облаке',
+'Виртуализация':'Освойте VMware/Hyper-V и создайте виртуальную лабораторию',
+'Резервное копирование':'Настройте систему бэкапов и протестируйте восстановление',
+'VMware/Hyper-V':'Пройдите сертификацию VMware VCP или Microsoft MCSA',
+'VMware/ Hyper-V':'Пройдите сертификацию VMware VCP или Microsoft MCSA',
+'ITIL':'Пройдите ITIL Foundation и внедрите ITSM-процессы',
+'Стратегические продажи':'Изучите методику SPIN-selling и применяйте на встречах',
+'Управление ключевыми клиентами':'Внедрите KAM-методологию для топ-клиентов',
+'Презентации':'Подготовьте шаблон коммерческого предложения и тренируйтесь',
+'Планирование продаж':'Составьте план продаж на квартал с использованием CRM',
+'Деловая переписка':'Создайте шаблоны деловой переписки и применяйте их',
+'Менторство':'Найдите ментора среди опытных коллег или станьте ментором',
+'KPI':'Разработайте систему KPI для команды и ведите еженедельный учёт',
+'Договорная работа':'Изучите основы договорного права и создайте шаблоны договоров',
+'Клиентский сервис':'Внедрите стандарты обслуживания и собирайте обратную связь',
+'Внутренние системы':'Освойте внутренние CRM/ERP-системы компании',
+'Тендерные продажи':'Изучите 44-ФЗ/223-ФЗ и примите участие в тендере',
+'Законодательство о закупках':'Пройдите курс по госзакупкам и получите допуск',
+'Документооборот':'Настройте электронный документооборот и сократите бумажный архив',
+'Государственные закупки':'Изучите специфику работы с госзаказчиками',
+'Маркетинг':'Пройдите курс по основам маркетинга и применяйте на практике',
+'Аналитика рынка':'Проведите исследование рынка и подготовьте отчёт',
+'Digital':'Освойте digital-инструменты таргет SEO контент-маркетинг',
+'Копирайтинг':'Пишите тексты для соцсетей и получайте обратную связь',
+'Брендинг':'Изучите основы брендинга и разработайте brandbook',
+'Управление продуктами':'Изучите Product Management и создайте roadmap продукта',
+'Roadmap':'Составьте дорожную карту развития продукта на квартал',
+'Кросс-функциональная координация':'Наладьте коммуникацию между командами через регулярные sync-meetings',
+'Agile/Scrum':'Пройдите Certified Scrum Master и применяйте спринты',
+'Управление отношениями':'Внедрите CRM для управления клиентскими отношениями',
+'Лояльность':'Разработайте программу лояльности и измеряйте NPS',
+'Кросс-продажи':'Изучите техники кросс-продаж и предлагайте допуслуги',
+'Продажи B2B':'Изучите особенности B2B-продаж и длинного цикла сделки',
+'Развитие базы':'Проводите холодные звонки и расширяйте клиентскую базу',
+'Управление сервисом':'Внедрите ITSM-процессы и настройте сервисные уровни',
+'Решение конфликтов':'Пройдите тренинг по медиации и применяйте на практике',
+'Маркетинг-стратегия':'Разработайте маркетинговую стратегию на квартал',
+'Digital-маркетинг':'Освойте Яндекс.Директ таргетированную рекламу и SEO',
+'Изменения':'Пройдите курс по управлению изменениями ADKAR',
+'Инструктаж':'Разработайте программу инструктажа и проведите тестовую сессию',
+'Культура':'Изучите методики развития корпоративной культуры',
+'Оценка компетенций':'Пройдите обучение методам оценки и проведите оценку коллеги',
+'Переговоры высокого уровня':'Тренируйте переговоры с руководителями уровней C/D',
+'Планирование':'Освойте методы планирования и применяйте в еженедельном плане',
+'Планирование продаж':'Составьте план продаж на квартал с KPI',
+'Развитие бизнеса':'Изучите методы поиска новых направлений и партнёров',
+'Развитие лидерства':'Пройдите лидерскую программу или leadership bootcamp',
+'Серверное администрирование':'Практикуйтесь на серверах в облаке или на домашней лаборатории',
+'Стратегическое мышление':'Развивайте через кейсы и стратегические игры',
+'Трансформация процессов':'Изучите BPM-нотацию и оптимизируйте один из процессов'
+};
+const roleData = {
+  hrbp:{
+    currentPos:'HR BP',
+    currentDesc:'Бизнес-партнёрство с продуктовыми командами: подбор, адаптация, онбординг, решение кадровых вопросов, работа с LMS.',
+    devSkills:['Стратегическое мышление','HR-аналитика','Управление талантами','Управление изменениями'],
+    goal:'Senior HR BP',
+    plans:[
+      {title:'Senior HR BP',desc:'Повышение до старшего бизнес-партнёра: стратегическое консультирование бизнес-лидеров, управление талантами, развитие HR-аналитики.',readiness:68,skills:{required:['Понимание бизнеса','Стратегическое мышление','HR-аналитика'],desirable:['Управление изменениями','Управление талантами','Коммуникация']},has:[0,1,4,5],miss:[2,3],readinessItems:[{name:'Понимание бизнеса',pct:80,target:90,color:'var(--success)',time:''},{name:'Стратегическое мышление',pct:70,target:85,color:'var(--primary)',time:''},{name:'HR-аналитика',pct:40,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Управление изменениями',pct:50,target:80,color:'var(--warning)',time:'~2 ч.'},{name:'Управление талантами',pct:45,target:75,color:'var(--warning)',time:'~3 ч.'},{name:'Коммуникация',pct:75,target:90,color:'var(--success)',time:''}]},
+      {title:'Руководитель HR BP',desc:'Руководство командой HR BP, построение HR-стратегии для направления, управление преемственностью и HR-бюджетом.',readiness:35,skills:{required:['Лидерство','Бюджетирование','Стратегия'],desirable:['Менторинг','Переговоры','HR-право']},has:[4,5],miss:[0,1,2,3],readinessItems:[{name:'Лидерство',pct:55,target:85,color:'var(--warning)',time:'~2 ч.'},{name:'Бюджетирование',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Стратегия',pct:30,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Менторинг',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Переговоры',pct:40,target:75,color:'var(--warning)',time:'~3 ч.'},{name:'HR-право',pct:70,target:85,color:'var(--success)',time:''}]},
+      {title:'HR Директор',desc:'Стратегическое управление всем HR-направлением компании: от рекрутинга до культуры, от компенсаций до трансформации процессов.',readiness:12,skills:{required:['Организационный дизайн','Трансформация процессов'],desirable:['Талант-менеджмент','Корпоративная культура']},has:[2],miss:[0,1,3],readinessItems:[{name:'Организационный дизайн',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Трансформация процессов',pct:10,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Талант-менеджмент',pct:20,target:70,color:'var(--danger)',time:'~5 ч.'},{name:'Корпоративная культура',pct:18,target:70,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    alt:[
+      {title:'Руководитель развития талантов',desc:'Руководство направлением развития талантов: программы наставничества, лидерские треки, assessment центры.',readiness:25,skills:{required:['Оценка компетенций','Развитие лидерства'],desirable:['Assessment','Коучинг','L&D стратегия']},has:[3],miss:[0,1,2,4],readinessItems:[{name:'Оценка компетенций',pct:30,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Развитие лидерства',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Assessment',pct:35,target:70,color:'var(--danger)',time:'~3 ч.'},{name:'Коучинг',pct:45,target:75,color:'var(--warning)',time:'~3 ч.'},{name:'L&D стратегия',pct:50,target:80,color:'var(--warning)',time:'~2 ч.'}]},
+      {title:'Руководитель HR-операций',desc:'Оптимизация HR-процессов, автоматизация, управление HRIS и Compliance. Операционное ядро HR-департамента.',readiness:8,skills:{required:['HRIS','Процессы'],desirable:['Compliance','Автоматизация','Метрики']},has:[2],miss:[0,1,3,4],readinessItems:[{name:'HRIS',pct:10,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Процессы',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Compliance',pct:8,target:70,color:'var(--danger)',time:'~8 ч.'},{name:'Автоматизация',pct:5,target:70,color:'var(--danger)',time:'~8 ч.'},{name:'Метрики',pct:12,target:65,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    readiness:{total:62,items:[
+      {name:'Понимание бизнеса',pct:80,target:90,color:'var(--success)',time:''},
+      {name:'Стратегическое мышление',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},
+      {name:'HR-аналитика',pct:50,target:80,color:'var(--warning)',time:'~2 ч.'},
+      {name:'Управление изменениями',pct:55,target:80,color:'var(--warning)',time:'~2 ч.'},
+      {name:'Коммуникация и влияние',pct:70,target:90,color:'var(--success)',time:''}
+    ]},
+    currentReadinessItems:[{name:'Понимание бизнеса',pct:100,target:90,color:'var(--success)',time:''},{name:'Стратегическое мышление',pct:100,target:85,color:'var(--success)',time:''},{name:'HR-аналитика',pct:100,target:80,color:'var(--success)',time:''},{name:'Управление изменениями',pct:100,target:80,color:'var(--success)',time:''},{name:'Коммуникация и влияние',pct:100,target:90,color:'var(--success)',time:''}],
+    skillsHave:['Коммуникация','Подбор и адаптация','Трудовое право','Кадровое делопроизводство','Наставничество','Онбординг','Работа с LMS','Базовая HR-аналитика'],
+    skillsRequired:['Стратегический консалтинг','HR-дашборды и метрики','Управление талантами','Управление изменениями'],
+    skillsDesirable:['Преемственность руководителей','Бюджетирование HR','Организационный дизайн','ROI обучения'],
+    vacancies:[
+      {title:'HR BP',dept:'Продуктовое направление',loc:'Москва',match:78,exp:'От 6 месяцев в текущей должности',skills:['Подбор ✅','Адаптация ✅','Аналитика ⬜','Стратегия ⬜']},
+      {title:'Senior HR BP',dept:'Технологическое направление',loc:'Гибрид',match:52,exp:'От 2 лет в текущей должности',skills:['Стратегия ⬜','Аналитика ⬜','Бизнес ⬜','Изменения ⬜']},
+      {title:'HR BP (Дирекция по персоналу)',dept:'Бэк-офис',loc:'Москва',match:70,exp:'От 1 года в текущей должности',skills:['Подбор ✅','Коммуникация ✅','Таланты ⬜','HRIS ⬜']}
+    ]
+  },
+  teamlead:{
+    currentPos:'Тимлид',
+    currentDesc:'Руководство командой из 5 специалистов по обучению: онбординг, развитие компетенций, управление знаниями, коучинг наставников.',
+    devSkills:['Проектное управление','Методологии AC/DC','Бюджетирование','Аналитика ROI обучения'],
+    goal:'Руководитель направления корпоративного обучения',
+    plans:[
+      {title:'Руководитель направления корпоративного обучения',desc:'Стратегическое руководство L&D-направлением: разработка стратегии обучения, управление бюджетом и командой, внедрение EdTech, метрики эффективности.',readiness:58,skills:{required:['Стратегия','Лидерство','Бюджетирование'],desirable:['Масштабирование','Интеграция с бизнесом','Системное видение']},has:[0,4,5],miss:[1,2,3],readinessItems:[{name:'Стратегия',pct:75,target:90,color:'var(--success)',time:''},{name:'Лидерство',pct:35,target:85,color:'var(--danger)',time:'~3 ч.'},{name:'Бюджетирование',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Масштабирование',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Интеграция с бизнесом',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Системное видение',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'}]},
+      {title:'Тимлид команды оценки',desc:'Управление проектами assessment/development center, разработка методик оценки, координация оценщиков, аналитика результатов.',readiness:42,skills:{required:['Assessment','Проектное управление','Методология'],desirable:['Аналитика','Стейкхолдеры','Коммуникация']},has:[0,5],miss:[1,2,3,4],readinessItems:[{name:'Assessment',pct:75,target:90,color:'var(--success)',time:''},{name:'Проектное управление',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Методология',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Аналитика',pct:20,target:70,color:'var(--danger)',time:'~5 ч.'},{name:'Стейкхолдеры',pct:35,target:75,color:'var(--danger)',time:'~3 ч.'},{name:'Коммуникация',pct:70,target:85,color:'var(--success)',time:''}]},
+      {title:'Руководитель HR BP',desc:'Руководство командой HR BP, построение HR-стратегии для направления, управление преемственностью и HR-бюджетом.',readiness:30,skills:{required:['Лидерство','Бюджетирование','Стратегия'],desirable:['Менторинг','Переговоры','HR-право']},has:[3,4],miss:[0,1,2,5],readinessItems:[{name:'Лидерство',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Бюджетирование',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Стратегия',pct:30,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Менторинг',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Переговоры',pct:35,target:80,color:'var(--danger)',time:'~3 ч.'},{name:'HR-право',pct:70,target:85,color:'var(--success)',time:''}]}
+    ],
+    alt:[
+      {title:'Тимлид L&D',desc:'Руководство командой обучения: онбординг, развитие компетенций, управление знаниями, коучинг наставников.',readiness:72,skills:{required:['Лидерство','Коучинг'],desirable:['Фасилитация','Управление знаниями','Менторинг']},has:[1,2,3,4],miss:[0],readinessItems:[{name:'Лидерство',pct:75,target:85,color:'var(--success)',time:''},{name:'Коучинг',pct:40,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Фасилитация',pct:35,target:75,color:'var(--danger)',time:'~3 ч.'},{name:'Управление знаниями',pct:65,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Менторинг',pct:70,target:85,color:'var(--success)',time:''}]},
+      {title:'Руководитель направления методологии',desc:'Разработка методологий обучения и оценки, стандарты контента, контроль качества образовательных программ.',readiness:38,skills:{required:['Инструктаж','Дизайн обучения'],desirable:['Стандарты','Качество','Аналитика']},has:[3,4],miss:[0,1,2],readinessItems:[{name:'Инструктаж',pct:70,target:85,color:'var(--success)',time:''},{name:'Дизайн обучения',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Стандарты',pct:30,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Качество',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Аналитика',pct:65,target:80,color:'var(--primary)',time:'~2 ч.'}]}
+    ],
+    readiness:{total:58,items:[
+      {name:'Assessment / AC / DC',pct:70,target:85,color:'var(--success)',time:''},
+      {name:'Проектное управление',pct:55,target:80,color:'var(--warning)',time:'~2 ч.'},
+      {name:'Методология оценки',pct:60,target:85,color:'var(--primary)',time:'~2 ч.'},
+      {name:'Аналитика данных',pct:45,target:75,color:'var(--warning)',time:'~3 ч.'},
+      {name:'Коммуникация со стейкхолдерами',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'}
+    ]},
+    currentReadinessItems:[{name:'Assessment / AC / DC',pct:100,target:85,color:'var(--success)',time:''},{name:'Проектное управление',pct:100,target:80,color:'var(--success)',time:''},{name:'Методология оценки',pct:100,target:85,color:'var(--success)',time:''},{name:'Аналитика данных',pct:100,target:75,color:'var(--success)',time:''},{name:'Коммуникация со стейкхолдерами',pct:100,target:85,color:'var(--success)',time:''}],
+    skillsHave:['Фасилитация','Коучинг','Оценка компетенций','Работа с группами','Управление знаниями','Наставничество','Менторинг','Организация мероприятий'],
+    skillsRequired:['Разработка методик AC/DC','Проектное управление','Статистика и аналитика оценки','Работа с ATS/HRIS'],
+    skillsDesirable:['Валидация инструментов','Презентация результатов','Бюджетирование проектов','Управление оценщиками'],
+    vacancies:[
+      {title:'Тимлид L&D',dept:'Центр развития',loc:'Гибрид',match:75,exp:'От 1 года в текущей должности',skills:['Коучинг ✅','Фасилитация ✅','Лидерство ⬜','Стратегия ⬜']},
+      {title:'Руководитель направления методологии',dept:'Команда обучения',loc:'Москва',match:60,exp:'От 1 года в текущей должности',skills:['Методологии ⬜','Дизайн ⬜','Оценка ✅','Аналитика ⬜']},
+      {title:'Руководитель проектов оценки',dept:'HR-дирекция',loc:'Москва',match:65,exp:'От 6 месяцев в текущей должности',skills:['Оценка ✅','Проекты ⬜','Аналитика ⬜','Методология ⬜']}
+    ]
+  },
+  assessment:{
+    currentPos:'Руководитель проектов оценки',
+    currentDesc:'Управление проектами AC/DC, разработка методик оценки, координация оценщиков, аналитика результатов.',
+    devSkills:['Стратегическое мышление','Бюджетирование','Лидерство','Управление стейкхолдерами'],
+    goal:'Тимлид команды оценки',
+    plans:[
+      {title:'Тимлид команды оценки',desc:'Управление проектами assessment/development center, разработка методик оценки, координация оценщиков, аналитика результатов.',readiness:65,skills:{required:['Assessment','Проектное управление','Методология'],desirable:['Аналитика','Стейкхолдеры','Коммуникация']},has:[1,2,4,5],miss:[0,3],readinessItems:[{name:'Assessment',pct:80,target:90,color:'var(--success)',time:''},{name:'Проектное управление',pct:30,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Методология',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Аналитика',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Стейкхолдеры',pct:70,target:85,color:'var(--success)',time:''},{name:'Коммуникация',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'}]},
+      {title:'Руководитель направления корпоративного обучения',desc:'Стратегическое руководство L&D-направлением: стратегия обучения, бюджет, команда, EdTech, метрики эффективности.',readiness:15,skills:{required:['Стратегия','Лидерство','Бюджетирование'],desirable:['Масштабирование','EdTech','Системное видение']},has:[5],miss:[0,1,2,3,4],readinessItems:[{name:'Стратегия',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Лидерство',pct:20,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Бюджетирование',pct:10,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Масштабирование',pct:12,target:70,color:'var(--danger)',time:'~8 ч.'},{name:'EdTech',pct:18,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Системное видение',pct:10,target:80,color:'var(--danger)',time:'~8 ч.'}]},
+      {title:'HR бизнес-партнёр',desc:'Стратегическое консультирование бизнес-лидеров, управление талантами, развитие HR-аналитики на уровне бизнес-направления.',readiness:35,skills:{required:['Понимание бизнеса','Стратегия','HR-аналитика'],desirable:['Управление талантами','Коммуникация','Изменения']},has:[1,4],miss:[0,2,3,5],readinessItems:[{name:'Понимание бизнеса',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Стратегия',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'HR-аналитика',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Управление талантами',pct:30,target:70,color:'var(--danger)',time:'~5 ч.'},{name:'Коммуникация',pct:70,target:85,color:'var(--success)',time:''},{name:'Изменения',pct:65,target:80,color:'var(--primary)',time:'~2 ч.'}]}
+    ],
+    alt:[
+      {title:'Руководитель подразделения HR аналитики',desc:'Руководство аналитикой персонала: people data, предиктивные модели, дашборды для руководства, HR-метрики.',readiness:28,skills:{required:['People Analytics','Статистика'],desirable:['Дашборды','Стратегия','Визуализация']},has:[2,4],miss:[0,1,3],readinessItems:[{name:'People Analytics',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Статистика',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Дашборды',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Стратегия',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Визуализация',pct:18,target:70,color:'var(--danger)',time:'~8 ч.'}]},
+      {title:'Руководитель направления развития талантов',desc:'Стратегия развития талантов: лидерские треки, преемственность, assessment, внутренний рынок.',readiness:22,skills:{required:['Таланты','Преемственность'],desirable:['Assessment','Стратегия','Лидерство']},has:[2],miss:[0,1,3,4],readinessItems:[{name:'Таланты',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Преемственность',pct:10,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Assessment',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Стратегия',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Лидерство',pct:18,target:80,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    readiness:{total:55,items:[
+      {name:'Методология оценки',pct:75,target:90,color:'var(--success)',time:''},
+      {name:'Управление проектами',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},
+      {name:'Стратегическое мышление',pct:40,target:75,color:'var(--danger)',time:'~3 ч.'},
+      {name:'Бюджетирование',pct:30,target:70,color:'var(--danger)',time:'~5 ч.'},
+      {name:'Лидерство',pct:55,target:80,color:'var(--warning)',time:'~2 ч.'}
+    ]},
+    currentReadinessItems:[{name:'Методология оценки',pct:100,target:90,color:'var(--success)',time:''},{name:'Управление проектами',pct:100,target:80,color:'var(--success)',time:''},{name:'Стратегическое мышление',pct:100,target:75,color:'var(--success)',time:''},{name:'Бюджетирование',pct:100,target:70,color:'var(--success)',time:''},{name:'Лидерство',pct:100,target:80,color:'var(--success)',time:''}],
+    skillsHave:['Разработка AC/DC','Методология оценки','Проектное управление','Аналитика данных','Стейкхолдеры','Коммуникация'],
+    skillsRequired:['Стратегическое планирование','Бюджетирование','Лидерство команды','Интеграция с HR-процессами'],
+    skillsDesirable:['Управление стейкхолдерами','Стратегия развития персонала','ROI и бизнес-обоснование','Масштабирование программ'],
+    vacancies:[
+      {title:'Тимлид команды оценки',dept:'HR-дирекция',loc:'Москва',match:82,exp:'От 1 года в текущей должности',skills:['Оценка ✅','Проекты ✅','Методология ✅','Аналитика ✅']},
+      {title:'Руководитель подразделения HR аналитики',dept:'HR-аналитика',loc:'Гибрид',match:55,exp:'От 2 лет в текущей должности',skills:['Аналитика ✅','Статистика ✅','Дашборды ⬜','Стратегия ⬜']},
+      {title:'Руководитель проектов оценки',dept:'Центр оценки',loc:'Москва',match:70,exp:'От 6 месяцев в текущей должности',skills:['Оценка ✅','Проекты ⬜','Методология ⬜','Лидерство ⬜']}
+    ]
+  },
+  director:{
+    currentPos:'Директор направления',
+    currentDesc:'Стратегическое руководство направлением обучения и оценки: EdTech, образовательные экосистемы, метрики ROI, развитие корпоративного университета.',
+    devSkills:['Управление финансами','Брендинг работодателя','Корпоративное управление','Презентации для топ-менеджмента'],
+    goal:'HR Директор',
+    plans:[
+      {title:'HR Директор',desc:'Стратегическое управление HR-департаментом: от рекрутинга до компенсаций, от культуры до трансформации процессов. Полная ответственность за кадровую политику.',readiness:70,skills:{required:['Стратегия','Лидерство','Финансы'],desirable:['Трансформация процессов','Культура','Таланты']},has:[0,1,3,5],miss:[2,4],readinessItems:[{name:'Стратегия',pct:80,target:95,color:'var(--success)',time:''},{name:'Лидерство',pct:75,target:90,color:'var(--success)',time:''},{name:'Финансы',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Трансформация процессов',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Культура',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Таланты',pct:35,target:70,color:'var(--danger)',time:'~3 ч.'}]},
+      {title:'Вице-президент по персоналу',desc:'Стратегическое руководство всеми HR-процессами компании: кадровая политика, развитие бренда работодателя, планирование штата, управление изменениями.',readiness:25,skills:{required:['Глобальная стратегия','Бренд работодателя','Планирование штата'],desirable:['Управление изменениями','Корпоративная культура']},has:[3],miss:[0,1,2,4],readinessItems:[{name:'Глобальная стратегия',pct:15,target:90,color:'var(--danger)',time:'~8 ч.'},{name:'Бренд работодателя',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Планирование штата',pct:10,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Управление изменениями',pct:25,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Корпоративная культура',pct:18,target:80,color:'var(--danger)',time:'~8 ч.'}]},
+      {title:'Главный директор по персоналу',desc:'Член высшего руководства: стратегия компании через людей, взаимодействие с советом директоров, трансформация бизнеса через HR.',readiness:8,skills:{required:['Стратегия бизнеса','Лидерство уровня C','Финансы'],desirable:['Корпоративное управление','Трансформация процессов','Видение']},has:[3],miss:[0,1,2,4,5],readinessItems:[{name:'Стратегия бизнеса',pct:10,target:90,color:'var(--danger)',time:'~8 ч.'},{name:'Лидерство уровня C',pct:12,target:90,color:'var(--danger)',time:'~8 ч.'},{name:'Финансы',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Корпоративное управление',pct:8,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Трансформация процессов',pct:10,target:85,color:'var(--danger)',time:'~8 ч.'},{name:'Видение',pct:12,target:85,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    alt:[
+      {title:'Директор L&D',desc:'Стратегическое руководство обучением: EdTech, образовательные экосистемы, метрики ROI, развитие корпоративного университета.',readiness:75,skills:{required:['Стратегия обучения','EdTech'],desirable:['Бюджетирование','Корпоративный университет','Понимание бизнеса']},has:[0,1,4],miss:[2,3],readinessItems:[{name:'Стратегия обучения',pct:80,target:90,color:'var(--success)',time:''},{name:'EdTech',pct:35,target:80,color:'var(--danger)',time:'~3 ч.'},{name:'Бюджетирование',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Корпоративный университет',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Понимание бизнеса',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'}]},
+      {title:'Директор по талантам',desc:'Стратегия талантов: преемственность, развитие лидерства, внутренний рынок, assessment, развитие бренда работодателя.',readiness:40,skills:{required:['Таланты','Преемственность'],desirable:['Assessment','Лидерство','Бренд работодателя']},has:[0,3],miss:[1,2,4],readinessItems:[{name:'Таланты',pct:70,target:85,color:'var(--success)',time:''},{name:'Преемственность',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Assessment',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Лидерство',pct:30,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Бренд работодателя',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    readiness:{total:70,items:[
+      {name:'Стратегическое мышление',pct:75,target:90,color:'var(--success)',time:''},
+      {name:'Лидерство',pct:80,target:95,color:'var(--success)',time:''},
+      {name:'Понимание бизнеса',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},
+      {name:'Управление бюджетом',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},
+      {name:'Трансформационные проекты',pct:55,target:80,color:'var(--warning)',time:'~2 ч.'}
+    ]},
+    currentReadinessItems:[{name:'Стратегическое мышление',pct:100,target:90,color:'var(--success)',time:''},{name:'Лидерство',pct:100,target:95,color:'var(--success)',time:''},{name:'Понимание бизнеса',pct:100,target:85,color:'var(--success)',time:''},{name:'Управление бюджетом',pct:100,target:80,color:'var(--success)',time:''},{name:'Трансформационные проекты',pct:100,target:80,color:'var(--success)',time:''}],
+    skillsHave:['Стратегическое мышление','Лидерство','Понимание бизнеса','Управление командой','Стратегия обучения','Управление изменениями','Стейкхолдеры','Коммуникация уровня руководства'],
+    skillsRequired:['Управление финансами','Бренд работодателя','Планирование штата','Управление изменениями при слияниях'],
+    skillsDesirable:['Корпоративное управление','Презентации для инвесторов','Глобальная HR-стратегия','Управление HR-бюджетом'],
+    vacancies:[
+      {title:'Директор L&D',dept:'HR-дирекция',loc:'Москва',match:72,exp:'От 3 лет в текущей должности',skills:['Стратегия ✅','Команда ✅','EdTech ⬜','Бюджет ⬜']},
+      {title:'Директор по талантам',dept:'Центр развития',loc:'Гибрид',match:60,exp:'От 2 лет в текущей должности',skills:['Таланты ⬜','Преемственность ⬜','Стратегия ✅','Лидерство ✅']},
+      {title:'HR Директор',dept:'Весь HR',loc:'Москва',match:45,exp:'От 3 лет в текущей должности',skills:['Стратегия ✅','Финансы ⬜','Трансформация ⬜','Управление ⬜']}
+    ]
+  },
+  service:{
+    currentPos:'Сервисный инженер',
+    currentDesc:'Обслуживание абонентов и устранение перебоев доступа к услугам (интернет, ТВ, видеонаблюдение, умный дом), настройка оборудования, электромонтажные работы, ведение отчётности.',
+    devSkills:['Лидерство','Проектное управление','SLA и KPI','Аналитика сети'],
+    goal:'Ведущий сервисный инженер',
+    plans:[
+      {title:'Ведущий сервисный инженер',desc:'Руководство бригадой сервисных инженеров, контроль качества обслуживания, координация аварийных служб, обучение молодых специалистов.',readiness:55,skills:{required:['Лидерство','Контроль качества','Обучение персонала'],desirable:['Проектное управление','Аналитика','Наставничество']},has:[0,4,5],miss:[1,2,3],readinessItems:[{name:'Лидерство',pct:60,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Контроль качества',pct:45,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Обучение персонала',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Проектное управление',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Аналитика',pct:35,target:80,color:'var(--danger)',time:'~3 ч.'},{name:'Наставничество',pct:50,target:80,color:'var(--warning)',time:'~2 ч.'}]},
+      {title:'Старший сервисный инженер',desc:'Управление сервисным направлением: контроль качества обслуживания, обучение персонала, выполнение SLA, координация аварийных служб, взаимодействие с поставщиками.',readiness:83,skills:{required:['Управление персоналом','SLA','Менторство'],desirable:['Мотивация','Контроль качества','Обучение персонала']},has:[0,2,3,4,5],miss:[1],readinessItems:[{name:'Управление персоналом',pct:65,target:85,color:'var(--success)',time:'~2 ч.'},{name:'SLA',pct:40,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Менторство',pct:55,target:75,color:'var(--primary)',time:'~2 ч.'},{name:'Мотивация',pct:70,target:80,color:'var(--success)',time:''},{name:'Контроль качества',pct:55,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Обучение персонала',pct:50,target:75,color:'var(--warning)',time:'~2 ч.'}]},
+      {title:'Инженер технической поддержки',desc:'Эскалация сложных инцидентов, настройка серверного и сетевого оборудования, мониторинг сети, работа с тикетными системами.',readiness:42,skills:{required:['Сетевые технологии','Мониторинг','Тикетные системы'],desirable:['Серверное администрирование','Автоматизация','Документирование']},has:[0,3],miss:[1,2,4,5],readinessItems:[{name:'Сетевые технологии',pct:60,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Мониторинг',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Тикетные системы',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Серверное админ.',pct:35,target:75,color:'var(--danger)',time:'~3 ч.'},{name:'Автоматизация',pct:15,target:70,color:'var(--danger)',time:'~8 ч.'},{name:'Документирование',pct:45,target:80,color:'var(--warning)',time:'~3 ч.'}]}
+    ],
+    alt:[
+      {title:'Инженер-энергетик',desc:'Обеспечение бесперебойного электропитания оборудования сетей связи, обслуживание ИБП и дизельных генераторов, энергетический аудит объектов, контроль потребления энергоресурсов.',readiness:40,skills:{required:['Диагностика','Техническая экспертиза','Контроль качества'],desirable:['Планирование','Документирование','Мониторинг']},has:[0,1,2],miss:[3,4],readinessItems:[{name:'Диагностика',pct:55,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Техническая экспертиза',pct:45,target:75,color:'var(--warning)',time:'~3 ч.'},{name:'Контроль качества',pct:40,target:75,color:'var(--warning)',time:'~3 ч.'},{name:'Планирование',pct:25,target:70,color:'var(--danger)',time:'~5 ч.'},{name:'Документирование',pct:30,target:70,color:'var(--danger)',time:'~5 ч.'}]},
+      {title:'Инженер техподдержки (3ЛТП)',desc:'Консультация выездных специалистов по техническим вопросам, диагностика неисправностей оборудования и сетей, формирование инструкций для полевого персонала, контроль качества выполненных работ.',readiness:48,skills:{required:['Коммуникация','Диагностика','Техническая экспертиза'],desirable:['CRM','Наставничество','Метрики']},has:[0,1,2],miss:[3,4],readinessItems:[{name:'Коммуникация',pct:70,target:85,color:'var(--success)',time:''},{name:'Диагностика',pct:55,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Техническая экспертиза',pct:40,target:75,color:'var(--warning)',time:'~3 ч.'},{name:'CRM',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Метрики',pct:20,target:70,color:'var(--danger)',time:'~5 ч.'}]}
+    ],
+    readiness:{total:45,items:[
+      {name:'Монтаж сетевого оборудования',pct:75,target:90,color:'var(--success)',time:''},
+      {name:'Электромонтажные работы',pct:70,target:85,color:'var(--success)',time:''},
+      {name:'Диагностика неисправностей',pct:60,target:85,color:'var(--primary)',time:'~2 ч.'},
+      {name:'Консультирование клиентов',pct:55,target:80,color:'var(--warning)',time:'~2 ч.'},
+      {name:'Настройка роутеров и ONU',pct:80,target:90,color:'var(--success)',time:''}
+    ]},
+    currentReadinessItems:[{name:'Монтаж сетевого оборудования',pct:100,target:90,color:'var(--success)',time:''},{name:'Электромонтажные работы',pct:100,target:85,color:'var(--success)',time:''},{name:'Диагностика неисправностей',pct:100,target:85,color:'var(--success)',time:''},{name:'Консультирование клиентов',pct:100,target:80,color:'var(--success)',time:''},{name:'Настройка роутеров и ONU',pct:100,target:90,color:'var(--success)',time:''}],
+    skillsHave:['Монтаж сетевого оборудования','Электромонтажные работы','Диагностика неисправностей','Консультирование клиентов','Настройка роутеров и ONU','Аварийно-восстановительные работы','Ведение документации','Работа с абонентами','Менторство'],
+    skillsRequired:['Лидерство','Управление персоналом','Проектное управление','SLA и KPI'],
+    skillsDesirable:['Аналитика сети','Обучение персонала','Мотивация команды'],
+    vacancies:[
+      {title:'Старший сервисный инженер',dept:'Служба сервиса',loc:'Москва',match:83,exp:'От 1 года в текущей должности',rec:true,skills:['Лидерство ⬜','Контроль качества ✅','Монтаж ✅','Диагностика ✅']},
+      {title:'Директор сервисного центра',dept:'Техническая дирекция',loc:'Гибрид',match:30,exp:'От 3 лет в текущей должности',skills:['Управление ⬜','SLA ⬜','Эксплуатация ⬜','Организация работ ⬜']},
+      {title:'Инженер-энергетик',dept:'Энергетический отдел',loc:'Москва',match:40,exp:'От 6 месяцев в текущей должности',skills:['Диагностика ✅','Техническая экспертиза ⬜','Контроль качества ⬜','Документирование ⬜']}
+    ]
+  },
+  comms:{
+    currentPos:'Ведущий инженер связи',
+    currentDesc:'Устранение технических проблем и аварийно-восстановительные работы на оборудовании сетей связи, ремонтно-настроечные работы на элементах сети, администрирование оборудования SDH/PDH/xWDM, разработка технических решений и схем организации связи.',
+    devSkills:['Управление командой','Проектирование сетей','Бюджетирование','Стратегическое планирование'],
+    goal:'Руководитель группы эксплуатации',
+    plans:[
+      {title:'Руководитель группы эксплуатации',desc:'Управление бригадой инженеров связи, координация аварийно-восстановительных работ, контроль SLA, обучение персонала, взаимодействие со смежными подразделениями.',readiness:83,skills:{required:['Лидерство','Контроль качества','Обучение персонала'],desirable:['Проектное управление','SLA','Наставничество']},has:[0,1,2,4,5],miss:[3]},
+      {title:'Ведущий инженер по строительству сетей',desc:'Разработка проектов ВОЛС и абонентских сетей, расчёт стоимости решений, согласование технических заданий, экспертиза возможности реализации на сети.',readiness:38,skills:{required:['Проектирование ВОЛС','Расчёт решений','Техническая документация'],desirable:['CAD/САПР','Нормативы','Бюджетирование']},has:[0,2],miss:[1,3,4]},
+      {title:'Директор сервисного центра',desc:'Руководство структурными подразделениями, управление направлениями по обслуживанию абонентской базы и подключению абонентов, выполнение SLA, организация эксплуатации сети (аварийно-восстановительные и плановые работы на объектах связи).',readiness:25,skills:{required:['Управление командой','SLA','Эксплуатация сети','Организация работ'],desirable:['Руководство подразделениями','Обслуживание абонентов']},has:[5],miss:[0,1,2,3,4]}
+    ],
+    alt:[
+      {title:'Директор центра эксплуатации',desc:'Проектирование и обслуживание корпоративных сетей, настройка маршрутизаторов и коммутаторов, мониторинг сетевой инфраструктуры, внедрение VPN и Firewall.',readiness:40,skills:{required:['Cisco/HP','Маршрутизация','Мониторинг'],desirable:['VPN','Firewall','IPv6']},has:[1,2],miss:[0,3,4]},
+      {title:'Инженер по IT-инфраструктуре',desc:'Администрирование серверного оборудования, виртуализация, резервное копирование, контроль отказоустойчивости IT-систем, управление инцидентами.',readiness:30,skills:{required:['Серверы','Виртуализация','Резервное копирование'],desirable:['VMware/ Hyper-V','Мониторинг','ITIL']},has:[2],miss:[0,1,3]}
+    ],
+    readiness:{total:52,items:[
+      {name:'Администрирование SDH/PDH/xWDM',pct:70,target:90,color:'var(--success)',time:''},
+      {name:'Диагностика сетей связи',pct:65,target:85,color:'var(--success)',time:'~2 ч.'},
+      {name:'Разработка технических решений',pct:50,target:85,color:'var(--warning)',time:'~2 ч.'},
+      {name:'Проектирование ВОЛС',pct:40,target:80,color:'var(--warning)',time:'~3 ч.'},
+      {name:'Работа с документацией и ИС',pct:60,target:85,color:'var(--primary)',time:'~2 ч.'}
+    ]},
+    currentReadinessItems:[{name:'Администрирование SDH/PDH/xWDM',pct:100,target:90,color:'var(--success)',time:''},{name:'Диагностика сетей связи',pct:100,target:85,color:'var(--success)',time:''},{name:'Разработка технических решений',pct:100,target:85,color:'var(--success)',time:''},{name:'Проектирование ВОЛС',pct:100,target:80,color:'var(--success)',time:''},{name:'Работа с документацией и ИС',pct:100,target:85,color:'var(--success)',time:''}],
+    skillsHave:['Администрирование SDH/PDH/xWDM','Диагностика сетей связи','Разработка технических решений','Проектирование ВОЛС','Работа с документацией и ИС','Аварийно-восстановительные работы','Координация со смежными подразделениями','Настройка телекоммуникационного оборудования','Контроль качества','Обучение персонала'],
+    skillsRequired:['Лидерство','Управление командой','Проектное управление','Бюджетирование'],
+    skillsDesirable:['SLA и KPI','Наставничество','Стратегическое планирование'],
+    vacancies:[
+      {title:'Руководитель группы эксплуатации',dept:'Управление сетями связи',loc:'Москва',match:83,exp:'От 1 года в текущей должности',rec:true,skills:['Лидерство ⬜','Управление ⬜','SDH ✅','ВОЛС ✅']},
+      {title:'Ведущий инженер по строительству сетей',dept:'Проектный отдел',loc:'Гибрид',match:45,exp:'От 6 месяцев в текущей должности',skills:['Проектирование ⬜','CAD ⬜','Расчёт ⬜','Документация ✅']},
+      {title:'Директор сервисного центра',dept:'Транспортная сеть',loc:'Москва',match:68,exp:'От 2 лет в текущей должности',skills:['SDH ✅','DWDM ✅','Мониторинг ✅','Администрирование ✅']}
+    ]
+  },
+  sales:{
+    currentPos:'Менеджер по продажам 3К',
+    currentDesc:'Прямые продажи B2B, развитие клиентской базы (клиенты среднего бизнеса), проведение встреч и презентаций с первыми лицами компаний, подготовка коммерческих предложений, ведение полного цикла сделки в CRM.',
+    devSkills:['Продажи B2B','Развитие клиентской базы','Переговоры','CRM'],
+    goal:'Ведущий менеджер по продажам 3К',
+    plans:[
+      {title:'Ведущий менеджер по продажам 3К',desc:'Развитие ключевых клиентов, проведение встреч и презентаций с первыми лицами компаний, инициация и реализация крупных телекоммуникационных проектов, кросс-взаимодействие со смежными подразделениями.',readiness:83,skills:{required:['Стратегические продажи','Управление ключевыми клиентами','Презентации'],desirable:['Планирование продаж','Деловая переписка','Менторство']},has:[0,1,2,3,4],miss:[5],readinessItems:[{name:'Стратегические продажи',pct:60,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Управление ключевыми клиентами',pct:55,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Презентации',pct:70,target:85,color:'var(--success)',time:''},{name:'Планирование продаж',pct:45,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Деловая переписка',pct:65,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Менторство',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'}]},
+      {title:'Начальник отдела продаж',desc:'Управление командой продаж, постановка KPI, контроль выполнения плана, развитие ключевых клиентов, стратегическое планирование продаж.',readiness:25,skills:{required:['Лидерство','KPI','Стратегия'],desirable:['Управление командой','Бюджетирование','Аналитика']},has:[3],miss:[0,1,2,4,5],readinessItems:[{name:'Лидерство',pct:30,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'KPI',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Стратегия',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Управление командой',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Бюджетирование',pct:10,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Аналитика',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'}]},
+      {title:'Сервис-менеджер 3К',desc:'Контроль сроков исполнения договорных обязательств, работа с дебиторской задолженностью, подготовка коммерческих предложений и проектов договоров, сопровождение клиентов.',readiness:35,skills:{required:['Договорная работа','Клиентский сервис','Аналитика'],desirable:['CRM','Деловая переписка','Внутренние системы']},has:[0,4],miss:[1,2,3,5],readinessItems:[{name:'Договорная работа',pct:40,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Клиентский сервис',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Аналитика',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'CRM',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Деловая переписка',pct:65,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Внутренние системы',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    alt:[
+      {title:'Менеджер по продажам B2G',desc:'Продажи телекоммуникационных услуг государственным заказчикам, участие в тендерах и закупках по 44-ФЗ/223-ФЗ, подготовка тендерной документации, взаимодействие с госструктурами.',readiness:30,skills:{required:['Тендерные продажи','Законодательство о закупках','Документооборот'],desirable:['Государственные закупки','Презентации','CRM']},has:[2],miss:[0,1,3,4,5],readinessItems:[{name:'Тендерные продажи',pct:20,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Законодательство о закупках',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Документооборот',pct:40,target:75,color:'var(--warning)',time:'~3 ч.'},{name:'Государственные закупки',pct:10,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Презентации',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'CRM',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'}]},
+      {title:'Маркетолог',desc:'Маркетинговые кампании, анализ рынка, позиционирование продуктов, работа с цифровыми каналами, подготовка коммуникационных материалов.',readiness:20,skills:{required:['Маркетинг','Аналитика рынка'],desirable:['Digital','Копирайтинг','Брендинг']},has:[2],miss:[0,1,3,4],readinessItems:[{name:'Маркетинг',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Аналитика рынка',pct:10,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Digital',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Копирайтинг',pct:20,target:70,color:'var(--danger)',time:'~5 ч.'},{name:'Брендинг',pct:10,target:70,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    vacancies:[
+      {title:'Ведущий менеджер по продажам 3К',dept:'Продажи',loc:'Москва',match:83,exp:'От 2 лет в текущей должности',rec:true,skills:['Стратегические продажи ⬜','Ключевые клиенты ⬜','Презентации ✅','CRM ✅']},
+      {title:'Начальник отдела продаж',dept:'Дирекция продаж',loc:'Гибрид',match:25,exp:'От 3 лет в текущей должности',skills:['Лидерство ⬜','KPI ⬜','Стратегия ⬜','Команда ⬜']},
+      {title:'Менеджер по продажам B2G',dept:'Госпродажи',loc:'Москва',match:30,exp:'От 6 месяцев в текущей должности',skills:['Тендеры ⬜','44-ФЗ ⬜','Документация ⬜','CRM ✅']}
+    ]
+  },
+  leadSales:{
+    currentPos:'Ведущий менеджер по продажам 3К',
+    currentDesc:'Развитие ключевых клиентов (клиенты среднего и крупного бизнеса), проведение встреч и презентаций с первыми лицами компаний, инициация и реализация крупных телекоммуникационных проектов, кросс-взаимодействие со смежными подразделениями и партнёрами.',
+    devSkills:['Стратегические продажи','Руководство командой','Управление ключевыми клиентами','Планирование'],
+    goal:'Начальник отдела продаж',
+    plans:[
+      {title:'Начальник отдела продаж',desc:'Управление командой продаж, постановка KPI, контроль выполнения плана, развитие ключевых клиентов, стратегическое планирование продаж.',readiness:83,skills:{required:['Лидерство','KPI','Стратегия'],desirable:['Управление командой','Бюджетирование','Аналитика']},has:[0,1,2,3,5],miss:[4],readinessItems:[{name:'Лидерство',pct:60,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'KPI',pct:55,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Стратегия',pct:50,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Управление командой',pct:70,target:85,color:'var(--success)',time:''},{name:'Бюджетирование',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Аналитика',pct:35,target:75,color:'var(--danger)',time:'~3 ч.'}]},
+      {title:'Директор B2B',desc:'Стратегическое руководство направлением продаж, управление портфелем крупных клиентов, бюджетирование, развитие нового бизнеса.',readiness:20,skills:{required:['Стратегия','Бюджетирование','Лидерство'],desirable:['Развитие бизнеса','Переговоры высокого уровня','Управление изменениями']},has:[0],miss:[1,2,3,4,5],readinessItems:[{name:'Стратегия',pct:25,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Бюджетирование',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Лидерство',pct:30,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Развитие бизнеса',pct:10,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Переговоры высокого уровня',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Управление изменениями',pct:12,target:75,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    alt:[
+      {title:'Руководитель проектов продуктового офиса',desc:'Управление продуктами и сервисами компании, координация кросс-функциональных команд, roadmap development, взаимодействие с бизнесом и техническими командами.',readiness:30,skills:{required:['Управление продуктами','Roadmap','Кросс-функциональная координация'],desirable:['Agile/Scrum','Стейкхолдеры','Аналитика']},has:[0,1],miss:[2,3,4,5],readinessItems:[{name:'Управление продуктами',pct:35,target:85,color:'var(--danger)',time:'~3 ч.'},{name:'Roadmap',pct:30,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Кросс-функциональная координация',pct:40,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Agile/Scrum',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Стейкхолдеры',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Аналитика',pct:25,target:75,color:'var(--danger)',time:'~5 ч.'}]},
+      {title:'Руководитель отдела маркетинга',desc:'Стратегическое управление маркетинговыми активностями, управление командой, бюджетирование маркетинговых кампаний, развитие бренда, анализ эффективности.',readiness:20,skills:{required:['Маркетинг-стратегия','Лидерство','Бюджетирование'],desirable:['Управление командой','Digital-маркетинг','Брендинг']},has:[0],miss:[1,2,3,4,5],readinessItems:[{name:'Маркетинг-стратегия',pct:25,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Лидерство',pct:20,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'Бюджетирование',pct:15,target:80,color:'var(--danger)',time:'~8 ч.'},{name:'Управление командой',pct:30,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Digital-маркетинг',pct:55,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Брендинг',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'}]}
+    ],
+    vacancies:[
+      {title:'Начальник отдела продаж',dept:'Дирекция продаж',loc:'Москва',match:83,exp:'От 1 года в текущей должности',rec:true,skills:['Лидерство ⬜','KPI ⬜','Стратегия ⬜','Команда ⬜']},
+      {title:'Директор B2B',dept:'Дирекция продаж',loc:'Гибрид',match:20,exp:'От 3 лет в текущей должности',skills:['Стратегия ⬜','Бюджетирование ⬜','Лидерство ⬜','Бизнес ⬜']},
+      {title:'Руководитель проектов продуктового офиса',dept:'Продуктовый офис',loc:'Гибрид',match:30,exp:'От 6 месяцев в текущей должности',skills:['Продукты ⬜','Roadmap ⬜','Команды ⬜','Стейкхолдеры ⬜']}
+    ]
+  },
+  serviceMgr:{
+    currentPos:'Сервис-менеджер 3К',
+    currentDesc:'Контроль сроков исполнения договорных обязательств, работа с дебиторской задолженностью, подготовка коммерческих предложений и проектов договоров, сопровождение клиентов уровня филиала.',
+    devSkills:['Управление отношениями','Договорная работа','Аналитика','Клиентский сервис'],
+    goal:'Ведущий сервис-менеджер 3К',
+    plans:[
+      {title:'Ведущий сервис-менеджер 3К',desc:'Управление крупными клиентами, контроль SLA, развитие клиентской базы, подготовка коммерческих предложений, координация междисциплинарных проектов.',readiness:83,skills:{required:['Управление клиентами','SLA','Коммуникация'],desirable:['Планирование','Аналитика','Деловая переписка']},has:[0,1,2,3,5],miss:[4],readinessItems:[{name:'Управление клиентами',pct:65,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'SLA',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Коммуникация',pct:70,target:85,color:'var(--success)',time:''},{name:'Планирование',pct:40,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Аналитика',pct:35,target:75,color:'var(--danger)',time:'~3 ч.'},{name:'Деловая переписка',pct:75,target:85,color:'var(--success)',time:''}]},
+      {title:'Менеджер по продажам 3К',desc:'Прямые продажи B2B, развитие клиентской базы, проведение встреч и презентаций, подготовка коммерческих предложений, ведение полного цикла сделки в CRM.',readiness:45,skills:{required:['Продажи B2B','Переговоры','CRM'],desirable:['Презентации','Развитие базы','Планирование']},has:[0,1,3],miss:[2,4,5],readinessItems:[{name:'Продажи B2B',pct:50,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Переговоры',pct:55,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'CRM',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Презентации',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Развитие базы',pct:25,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Планирование',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'}]}
+    ],
+    alt:[
+      {title:'Руководитель клиентского сервиса',desc:'Управление сервисной командой, контроль выполнения SLA, развитие клиентского сервиса, работа с жалобами и эскалациями, метрики удовлетворённости.',readiness:30,skills:{required:['Лидерство','SLA','Управление сервисом'],desirable:['Метрики','Решение конфликтов','Бюджетирование']},has:[1],miss:[0,2,3,4,5],readinessItems:[{name:'Лидерство',pct:25,target:85,color:'var(--danger)',time:'~5 ч.'},{name:'SLA',pct:60,target:80,color:'var(--primary)',time:'~2 ч.'},{name:'Управление сервисом',pct:20,target:80,color:'var(--danger)',time:'~5 ч.'},{name:'Метрики',pct:15,target:75,color:'var(--danger)',time:'~8 ч.'},{name:'Решение конфликтов',pct:30,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'Бюджетирование',pct:10,target:70,color:'var(--danger)',time:'~8 ч.'}]},
+      {title:'Персональный менеджер по сопровождению клиентов',desc:'Индивидуальное сопровождение клиентов, управление lifecycle клиента, контроль удовлетворённости, решение оперативных задач, развитие лояльности и повторных продаж.',readiness:40,skills:{required:['Клиентский сервис','Управление отношениями','Лояльность'],desirable:['Коммуникация','Кросс-продажи','CRM']},has:[0,1,5],miss:[2,3,4],readinessItems:[{name:'Клиентский сервис',pct:50,target:85,color:'var(--primary)',time:'~2 ч.'},{name:'Управление отношениями',pct:45,target:80,color:'var(--warning)',time:'~3 ч.'},{name:'Лояльность',pct:35,target:80,color:'var(--danger)',time:'~3 ч.'},{name:'Коммуникация',pct:70,target:85,color:'var(--success)',time:''},{name:'Кросс-продажи',pct:20,target:75,color:'var(--danger)',time:'~5 ч.'},{name:'CRM',pct:40,target:75,color:'var(--warning)',time:'~3 ч.'}]}
+    ],
+    vacancies:[
+      {title:'Ведущий сервис-менеджер 3К',dept:'Клиентский сервис',loc:'Москва',match:83,exp:'От 1 года в текущей должности',rec:true,skills:['Управление клиентами ⬜','SLA ✅','Коммуникация ✅','Планирование ⬜']},
+      {title:'Менеджер по продажам 3К',dept:'Продажи',loc:'Москва',match:45,exp:'От 6 месяцев в текущей должности',skills:['Продажи B2B ⬜','Переговоры ✅','CRM ⬜','Презентации ✅']},
+      {title:'Руководитель клиентского сервиса',dept:'Дирекция сервиса',loc:'Гибрид',match:30,exp:'От 1 года в текущей должности',skills:['Лидерство ⬜','SLA ✅','Управление сервисом ⬜','Метрики ⬜']}
+    ]
+  }
+};
+
+const radarColors=['#6C3AED','#059669','#0EA5E9','#F97316','#DC2626'];
+let selectedPlanIdx=null;
+let currentRoleData=null;
+
+function calcProgress(has,miss){return has.length+miss.length===0?0:Math.round(has.length/(has.length+miss.length)*100);}
+
+function toggleLadderNode(el){
+  const wasExpanded=el.classList.contains('expanded');
+  document.querySelectorAll('.h-ladder-node.expanded').forEach(n=>n.classList.remove('expanded'));
+  if(!wasExpanded)el.classList.add('expanded');
+}
+
+function openPlanModal(){
+  const d=currentRoleData;
+  if(!d)return;
+  const allPlans=d.plans.concat(d.alt||[]);
+  const plan=allPlans[selectedPlanIdx]||d.plans[0];
+  const skillsHave=d.skillsHave||{};
+  const haveNames=new Set();
+  Object.values(skillsHave).forEach(arr=>arr.forEach(s=>haveNames.add(s)));
+  const required=plan.skills.required||[];
+  const desirable=plan.skills.desirable||[];
+  const html=`
+    <h4>Общие рекомендации по развитию</h4>
+    <ul>
+      <li>Планируйте еженедельные сессии для изучения новых компетенций</li>
+      <li>Используйте микромодули (15–20 мин/день) для регулярного обучения</li>
+      <li>Применяйте новые знания в текущих проектах сразу после изучения</li>
+      <li>Заведите дневник развития — фиксируйте прогресс каждую неделю</li>
+    </ul>
+    <h4>Текущий фокус: ${plan.title}</h4>
+    <p style="margin:0 0 12px;">${plan.desc}</p>
+    <h4>Необходимые компетенции (${required.length})</h4>
+    <ul>${required.map(s=>`<li>${haveNames.has(s)?'✅':'⬜'} <b>${s}</b> — ${haveNames.has(s)?'уже есть':'требуется develops'}</li>`).join('')}</ul>
+    <h4>Желательные компетенции (${desirable.length})</h4>
+    <ul>${desirable.map(s=>`<li>${haveNames.has(s)?'✅':'⬜'} <b>${s}</b></li>`).join('')}</ul>
+    <h4>Рекомендации по обучению</h4>
+    <ul>
+      <li>Начните с официальных программ и курсов по ${required.filter(s=>!haveNames.has(s)).join(', ')||'базовым компетенциям'}</li>
+      <li>Найдите наставника в команде, который уже владеет нужными навыками</li>
+      <li>Участвуйте в кросс-функциональных проектах для быстрого набора опыта</li>
+      <li>Пройдите assessment через 3 месяца для оценки прогресса</li>
+    </ul>
+  `;
+  document.getElementById('planModalBody').innerHTML=html;
+  document.getElementById('planModal').classList.add('active');
+}
+function closePlanModal(){document.getElementById('planModal').classList.remove('active');}
+
+function selectCurrentPosition(){
+  const d=currentRoleData;
+  if(!d)return;
+  selectedPlanIdx=null;
+  document.getElementById('radarSection').style.visibility='hidden';
+  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.h-ladder-node').forEach(n=>n.classList.remove('selected'));
+  const currentNode=document.querySelector('.h-ladder-node.current');
+  if(currentNode)currentNode.classList.add('selected');
+}
+
+function selectTrajectory(idx,items,el){
+  selectedPlanIdx=idx;
+  document.getElementById('radarSection').style.visibility='visible';
+  document.querySelectorAll('.plan-card').forEach((c,i)=>c.classList.toggle('selected',i===idx));
+  document.querySelectorAll('.h-ladder-node').forEach(n=>n.classList.remove('selected'));
+  const plan=currentRoleData.plans.concat(currentRoleData.alt)[idx];
+  if(el&&el.classList.contains('h-ladder-node')){el.classList.add('selected');}
+  else{document.querySelectorAll('.h-ladder-node').forEach(n=>{if(n.querySelector('.hl-title')&&n.querySelector('.hl-title').textContent===plan.title)n.classList.add('selected');});}
+  const allSkills=[...plan.skills.required,...plan.skills.desirable];
+  const haveCount=plan.has.length;
+  const missCount=plan.miss.length;
+  const total=haveCount+missCount;
+  const pct=Math.round(haveCount/total*100);
+  const haveSkills=plan.has.map(i=>allSkills[i]).filter(Boolean);
+  const missSkills=plan.miss.map(i=>allSkills[i]).filter(Boolean);
+  var timeMap={};var _sk=plan.skills.required.concat(plan.skills.desirable);plan.has.forEach(function(i){timeMap[_sk[i]]={time:''};});plan.miss.forEach(function(i){var nm=_sk[i];var ri=plan.readinessItems?plan.readinessItems.find(function(r){return r.name===nm;}):null;var p=ri?ri.pct:0;timeMap[nm]={time:p>=70?'~1 ч.':p>=50?'~2 ч.':p>=35?'~3 ч.':p>=20?'~5 ч.':'~8 ч.'};});
+  drawDonut(pct,plan.title,haveSkills,missSkills,timeMap);
+}
+
+function drawDonut(pct,title,haveSkills,missSkills,timeMap){timeMap=timeMap||{};
+  const svg=document.getElementById('radarSvg');
+  const size=280,cx=size/2,cy=size/2,r=90,stroke=18;
+  const circ=2*Math.PI*r;
+  const fillLen=circ*pct/100;
+  const emptyLen=circ-fillLen;
+  let html=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--gray-200)" stroke-width="${stroke}"/>`;
+  if(pct>0) html+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--success)" stroke-width="${stroke}" stroke-dasharray="${fillLen} ${emptyLen}" stroke-dashoffset="${circ/4}" stroke-linecap="round"/>`;
+  html+=`<text x="${cx}" y="${cy-8}" text-anchor="middle" font-size="36" font-weight="700" fill="var(--gray-800)" font-family="var(--font)">${pct}%</text>`;
+  html+=`<text x="${cx}" y="${cy+14}" text-anchor="middle" font-size="12" fill="var(--gray-400)" font-family="var(--font)">готовность</text>`;
+  svg.innerHTML=html;
+
+  document.getElementById('radarTitle').innerHTML='Рекомендованные треки <span class="card-subtitle">— '+title+'</span>';
+  let legendHtml='<div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--gray-800);">Необходимо для перехода</div>';
+  if(haveSkills&&haveSkills.length>0){
+    legendHtml+=haveSkills.map(s=>`<div class="radar-legend-item"><div class="radar-legend-dot" style="background:var(--success);"></div><div class="radar-legend-name" style="color:var(--success);">${s}</div></div>`).join('');
+  }
+  if(missSkills&&missSkills.length>0){
+    legendHtml+=missSkills.map(s=>{var t=timeMap[s]&&timeMap[s].time?' <span style="font-size:11px;color:var(--gray-400);white-space:nowrap;">'+timeMap[s].time+'</span>':'';return `<div class="radar-legend-item" title="${skillTips[s]||''}" style="cursor:help;"><div class="radar-legend-dot" style="background:var(--danger);"></div><div class="radar-legend-name" style="color:var(--danger);">${s}</div>${t}</div>`}).join('');
+  }
+  if((!haveSkills||haveSkills.length===0)&&(!missSkills||missSkills.length===0)){
+    legendHtml+='<div style="font-size:13px;color:var(--gray-400);padding:8px 0;">Текущая позиция</div>';
+  }
+  document.getElementById('radarLegend').innerHTML=legendHtml;
+}
+
+/* Counter */
+function getCounter(k){return parseInt(localStorage.getItem('gps_'+k)||'0',10);}
+function setCounter(k,v){localStorage.setItem('gps_'+k,String(v));renderCounters();}
+const counterKeys=['dev','eval','resume','consult','track','vacs'];
+function renderCounters(){let total=0;counterKeys.forEach(k=>{const val=getCounter(k);total+=val;document.getElementById(k+'Count').textContent=val;});document.getElementById('counterBadge').textContent=total;}
+function incrementDevCounter(){setCounter('dev',getCounter('dev')+1);}
+function incrementEvalCounter(){setCounter('eval',getCounter('eval')+1);}
+function incrementResumeCounter(){setCounter('resume',getCounter('resume')+1);}
+function incrementConsultCounter(){setCounter('consult',getCounter('consult')+1);}
+function incrementTrackCounter(){setCounter('track',getCounter('track')+1);}
+function incrementVacsCounter(){setCounter('vacs',getCounter('vacs')+1);}
+function resetCounters(){counterKeys.forEach(k=>localStorage.removeItem('gps_'+k));renderCounters();}
+function toggleCounter(){document.getElementById('counterPopup').classList.toggle('active');}
+document.addEventListener('click',e=>{const p=document.getElementById('counterPopup'),f=document.getElementById('counterFab');if(p.classList.contains('active')&&!p.contains(e.target)&&!f.contains(e.target))p.classList.remove('active');});
+
+function updateProfile(){
+  const pos=document.getElementById('positionSelect').value;
+  const d=roleData[pos];
+  currentRoleData=d;
+  selectedPlanIdx=null;
+  document.getElementById('radarSection').style.visibility='hidden';
+
+
+
+  function renderTrack(t){
+    const pct=t.plan?Math.round(t.plan.has.length/(t.plan.has.length+t.plan.miss.length)*100):t.pct;
+    const c=t.type==='current'?'var(--success)':pct>=70?'var(--success)':pct>=50?'var(--primary)':'var(--warning)';
+    const tag=t.type==='current'?'<span class="badge gray">Текущая должность</span>':t.type==='alt-node'?'<span class="badge orange">Смежный трек</span>':'';
+    const desc=t.type==='current'?'':t.plan?t.desc:'';
+    const click=t.type==='current'?'':t.plan?`onclick="toggleLadderNode(this);selectTrajectory(${t.planIdx},currentRoleData.plans.concat(currentRoleData.alt)[${t.planIdx}].readinessItems,this)"`:'';    return `<div class="h-ladder-node ${t.type}" ${click}><div class="h-ladder-dot"></div><div class="h-ladder-card"><div class="hl-tag">${tag}</div><div class="hl-title">${t.title}</div>${desc?`<div class="hl-desc">${desc}</div>`:''}${t.plan?`<div class="hl-pct" style="color:${c};">${pct}%</div><div class="hl-sub">готовность</div>`:''}</div></div>`;
+  }
+  const mainTracks=[{title:d.currentPos,pct:100,type:'current'},...d.plans.map((p,i)=>({title:p.title,pct:p.readiness,type:'target',desc:p.desc,plan:p,planIdx:i}))];
+  const altTracks=d.alt.map((a,i)=>({title:a.title,pct:a.readiness,type:'alt-node',desc:a.desc,plan:a,planIdx:d.plans.length+i}));
+  document.getElementById('careerLadder').innerHTML=
+    `<div class="h-ladder">${mainTracks.map(t=>renderTrack(t)).join('')}</div>`+
+    (altTracks.length?'<div style="margin:8px 0 4px;"><div class="card-title">Смежные направления</div></div><div class="h-ladder">'+altTracks.map(t=>renderTrack(t)).join('')+'</div>':'');
+
+  function renderPlanCard(p,tagClass,tagText,idx){
+    const pct=Math.round(p.has.length/(p.has.length+p.miss.length)*100);
+    const c=pct>=70?'var(--success)':pct>=50?'var(--primary)':'var(--warning)';
+    return `<div class="plan-card" onclick="selectTrajectory(${idx},currentRoleData.plans.concat(currentRoleData.alt)[${idx}].readinessItems)"><div class="plan-header"><div><div class="plan-tag"><span class="badge ${tagClass}">${tagText}</span></div><div class="plan-title">${p.title}</div></div><div class="plan-pct" style="color:${c};">${pct}%</div></div><div class="plan-desc">${p.desc}</div></div>`;
+  }
+  document.getElementById('priorityPlans').innerHTML=d.plans.map((p,i)=>renderPlanCard(p,'purple','Траектория '+(i+1),i)).join('');
+  document.getElementById('altPlans').innerHTML=d.alt.map((p,i)=>renderPlanCard(p,'orange','Смежный трек',d.plans.length+i)).join('');
+
+  document.getElementById('skillsTitle').innerHTML='Навыки и компетенции в текущей должности — '+d.currentPos;
+  var _gs=new Set();d.plans.concat(d.alt||[]).forEach(function(p){var _a=p.skills.required.concat(p.skills.desirable);p.has.forEach(function(i){_gs.add(_a[i]);});});document.getElementById('skillsHave').innerHTML=Array.from(_gs).map(s=>`<span class="skill-chip has"><span class="chip-icon" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981;"></span>${s}</span>`).join('')||'<span style="font-size:12px;color:var(--gray-400);">Нет данных</span>';
+  document.getElementById('skillsRequired').innerHTML=d.skillsRequired.map(s=>`<span class="skill-chip miss"><span class="chip-icon">🔴</span>${s}</span>`).join('')||'<span style="font-size:12px;color:var(--gray-400);">—</span>';
+  document.getElementById('skillsDesirable').innerHTML=d.skillsDesirable.map(s=>`<span class="skill-chip" style="background:var(--info-light);color:#0369A1;"><span class="chip-icon">🔵</span>${s}</span>`).join('')||'<span style="font-size:12px;color:var(--gray-400);">—</span>';
+
+  selectedPlanIdx=null;
+  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.h-ladder-node').forEach(n=>n.classList.remove('selected'));
+  document.getElementById('radarSection').style.visibility='hidden';
+
+  document.getElementById('developBtns').innerHTML=`<a class="btn btn-primary" href="https://ankt.cc/Ab7dJO" target="_blank" onclick="incrementDevCounter()" style="text-decoration:none;margin-left:-40px;padding:12px 28px;font-size:15px;">🚀 Начать развитие</a>`;
+
+  document.getElementById('vacancies').innerHTML=d.vacancies.map(v=>{
+    const mColor=v.match>=70?'var(--success)':v.match>=50?'var(--primary)':'var(--warning)';
+    return `<div class="vac-card"><div class="vac-header"><div class="vac-title">${v.title}</div><div class="vac-match" style="color:${mColor};">${v.match}%</div></div><div class="vac-meta"><span>🏢 ${v.dept}</span><span>📍 ${v.loc}</span></div><div class="match-bar"><div class="fill" style="width:${v.match}%;background:${mColor};"></div></div><div class="vac-skills" style="margin-top:8px;">${v.skills.map(s=>`<span class="vac-skill ${s.includes('✅')?'ok':'no'}">${s}</span>`).join('')}</div><div style="display:flex;gap:8px;margin-top:10px;align-items:center;"><button class="btn btn-outline btn-sm">Подробнее</button>${v.rec?'<button class="btn btn-primary btn-sm">Подать заявку</button>':''}<span class="vac-exp">${v.exp}</span></div></div>`;
+  }).join('');
+}
+
+function openInfoModal(){document.getElementById('infoModal').classList.add('active');}
+function closeInfoModal(){document.getElementById('infoModal').classList.remove('active');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePlanModal();closeInfoModal();}});
+document.getElementById('planModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closePlanModal();});
+document.getElementById('infoModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeInfoModal();});
+
+renderCounters();
+updateProfile();
+</script>
+</body>
+</html>

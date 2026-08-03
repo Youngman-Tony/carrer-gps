@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карьерный GPS — Светлая тема + Career Ladder</title>
+<style>
+:root{--bg:#F8FAFC;--surface:#FFFFFF;--surface2:#F1F5F9;--border:#E2E8F0;--text:#1E293B;--text2:#475569;--text3:#94A3B8;--primary:#6366F1;--primary-hover:#4F46E5;--primary-light:rgba(99,102,241,.08);--success:#10B981;--success-light:rgba(16,185,129,.08);--warning:#F59E0B;--warning-light:rgba(245,158,11,.08);--danger:#EF4444;--danger-light:rgba(239,68,68,.08);--info:#0EA5E9;--info-light:rgba(14,165,233,.08);--font:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;--radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,.06);--shadow-md:0 4px 12px rgba(0,0,0,.08);--toast-border:var(--success);}
+body.dark{--bg:#0F172A;--surface:#1E293B;--surface2:#334155;--border:#475569;--text:#F1F5F9;--text2:#94A3B8;--text3:#64748B;--primary:#A78BFA;--primary-hover:#8B5CF6;--primary-light:rgba(167,139,250,.15);--success:#34D399;--success-light:rgba(52,211,153,.15);--warning:#FBBF24;--warning-light:rgba(251,191,36,.12);--danger:#F87171;--danger-light:rgba(248,113,113,.12);--info:#38BDF8;--info-light:rgba(56,189,248,.12);--shadow:0 1px 3px rgba(0,0,0,.2);--shadow-md:0 4px 12px rgba(0,0,0,.3);--toast-border:var(--success);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;}
+
+.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:10;}
+.topbar-logo{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:var(--primary);}
+.topbar-logo .icon{width:32px;height:32px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;}
+.topbar-right{display:flex;gap:8px;}
+.topbar-right button{padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12.5px;cursor:pointer;font-family:var(--font);}
+.topbar-right button:hover{background:var(--surface2);}
+
+.container{max-width:1060px;margin:0 auto;padding:24px 24px 60px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:16px;box-shadow:var(--shadow);transition:border-color .2s;}
+.card:hover{border-color:var(--primary);}
+.card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.card-subtitle{font-size:11.5px;color:var(--text3);font-weight:400;margin-left:4px;}
+
+select.field{padding:6px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12.5px;font-family:var(--font);color:var(--text);background:var(--surface);cursor:pointer;outline:none;}
+select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.1);}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:11px;font-weight:500;}
+.badge.purple{background:var(--primary-light);color:var(--primary);}
+.badge.green{background:var(--success-light);color:var(--success);}
+.badge.orange{background:var(--warning-light);color:var(--warning);}
+.badge.gray{background:var(--surface2);color:var(--text3);}
+.badge.red{background:var(--danger-light);color:var(--danger);}
+.badge.blue{background:var(--info-light);color:var(--info);}
+
+.btn{padding:6px 14px;border-radius:var(--radius-sm);border:none;font-size:12.5px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .15s;display:inline-flex;align-items:center;gap:5px;}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-hover);}
+.btn-outline{background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+.btn-outline:hover{background:var(--surface2);}
+.btn-sm{padding:4px 10px;font-size:11.5px;}
+
+.progress-bar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin:6px 0;}
+.progress-bar .fill{height:100%;border-radius:3px;transition:width .5s ease;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.section-label{font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;}
+
+.profile-header{display:flex;gap:20px;align-items:flex-start;}
+.profile-photo{width:84px;height:84px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:28px;font-weight:700;}
+.profile-name{font-size:20px;font-weight:700;}
+.profile-meta{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;}
+.profile-meta-item{font-size:12px;color:var(--text3);}
+.profile-meta-item strong{color:var(--text2);}
+
+.current-pos{display:flex;align-items:center;gap:14px;padding:16px;background:var(--primary-light);border-radius:var(--radius);}
+.current-pos-icon{width:42px;height:42px;border-radius:10px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.current-pos-info{flex:1;}
+.current-pos-title{font-size:14px;font-weight:600;}
+.current-pos-desc{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4;}
+.recommendation-list{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
+.rec-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);padding:5px 10px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border);}
+
+.h-ladder{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:8px 0 16px 0;position:relative;}
+.h-ladder::before{content:'';position:absolute;top:28px;left:24px;right:24px;height:3px;background:var(--border);border-radius:2px;z-index:0;}
+.h-ladder-node{position:relative;display:flex;flex-direction:column;align-items:center;min-width:140px;flex:1;z-index:1;cursor:pointer;}
+.h-ladder-dot{width:14px;height:14px;border-radius:50%;background:var(--text3);border:3px solid var(--surface);box-shadow:0 0 0 2px var(--text3);margin-bottom:8px;transition:all .2s;position:relative;z-index:2;}
+.h-ladder-node.target .h-ladder-dot{background:var(--success);box-shadow:0 0 0 2px var(--success),0 0 0 5px var(--success-light);}
+.h-ladder-node.active .h-ladder-dot{background:var(--primary);box-shadow:0 0 0 2px var(--primary),0 0 0 5px var(--primary-light);}
+.h-ladder-node.alt-node .h-ladder-dot{background:var(--warning);box-shadow:0 0 0 2px var(--warning),0 0 0 5px var(--warning-light);}
+.h-ladder-node.current .h-ladder-dot{background:var(--text2);box-shadow:0 0 0 2px var(--text2),0 0 0 5px rgba(71,85,85,.15);}
+.h-ladder-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;text-align:center;width:100%;transition:all .2s;box-shadow:var(--shadow);}
+.h-ladder-node:hover .h-ladder-card{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.h-ladder-card .hl-title{font-size:11px;font-weight:600;margin-bottom:3px;line-height:1.3;}
+.h-ladder-card .hl-pct{font-size:16px;font-weight:700;}
+.h-ladder-card .hl-sub{font-size:9px;color:var(--text3);margin-top:2px;}
+.h-ladder-card .hl-tag{margin-bottom:3px;}
+
+.plan-card{border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer;}
+.plan-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.plan-card.expanded{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.plan-card .plan-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.plan-card .plan-tag{margin-bottom:6px;}
+.plan-card .plan-title{font-size:14px;font-weight:600;}
+.plan-card .plan-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-top:6px;}
+.plan-card .plan-pct{font-size:22px;font-weight:700;min-width:48px;text-align:right;}
+.plan-card .plan-expand{font-size:11px;color:var(--text3);margin-top:8px;display:flex;align-items:center;gap:4px;}
+.plan-card .plan-expand .arrow{transition:transform .2s;display:inline-block;}
+.plan-card.expanded .plan-expand .arrow{transform:rotate(180deg);}
+.plan-card .plan-details{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+.plan-card.expanded .plan-details{max-height:300px;}
+.plan-card .plan-progress{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.plan-card .plan-progress-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+.plan-card .plan-progress-label span:first-child{color:var(--text3);}
+.plan-card .plan-progress-label span:last-child{font-weight:600;}
+
+.vbars{display:flex;gap:14px;align-items:flex-end;margin:12px 0 8px 0;}
+.vbar{display:flex;flex-direction:column;align-items:center;flex:1;gap:6px;}
+.vbar-track{width:100%;height:140px;background:var(--surface2);border-radius:var(--radius-sm);position:relative;display:flex;align-items:flex-end;overflow:visible;}
+.vbar-fill{width:100%;border-radius:var(--radius-sm);transition:height .6s ease;position:relative;}
+.vbar-label{font-size:10px;color:var(--text3);text-align:center;line-height:1.2;max-width:80px;}
+.vbar-value{font-size:12px;font-weight:700;}
+.vbar-target-line{position:absolute;left:-6px;right:-6px;border-top:2px dashed var(--success);z-index:2;}
+.vbar-target-label{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--success);white-space:nowrap;font-weight:600;}
+
+.summary-row{display:flex;gap:14px;margin-bottom:16px;}
+.summary-box{flex:1;padding:14px;border-radius:var(--radius);border:1px solid var(--border);text-align:center;}
+.summary-box .big{font-size:26px;font-weight:700;}
+.summary-box .label{font-size:11px;color:var(--text3);margin-top:2px;line-height:1.3;}
+.summary-box.total .big{color:var(--primary);}
+.summary-box.strength .big{color:var(--success);}
+.summary-box.growth .big{color:var(--danger);}
+
+.skill-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500;margin:3px 4px 3px 0;transition:all .2s;cursor:pointer;position:relative;}
+.skill-chip.has{background:var(--success-light);color:var(--success);}
+.skill-chip.miss{background:var(--danger-light);color:var(--danger);}
+.skill-chip:hover{transform:scale(1.05);}
+.skill-chip .chip-icon{font-size:11px;}
+.skill-chip .skill-actions{display:none;position:absolute;top:-32px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px 6px;gap:4px;z-index:5;white-space:nowrap;box-shadow:var(--shadow-md);}
+.skill-chip:hover .skill-actions{display:flex;}
+.skill-chip .skill-actions button{padding:2px 8px;border-radius:6px;border:none;font-size:10px;cursor:pointer;font-family:var(--font);background:var(--surface2);color:var(--text2);}
+.skill-chip .skill-actions button:hover{background:var(--primary-light);color:var(--primary);}
+.skills-group{margin-bottom:16px;}
+.skills-group-title{font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+
+.tree-container{display:flex;flex-direction:column;gap:0;align-items:center;}
+.tree-level{display:flex;justify-content:center;gap:12px;position:relative;padding:10px 0;}
+.tree-node{padding:7px 14px;border-radius:var(--radius-sm);font-size:11px;font-weight:500;text-align:center;border:2px solid;position:relative;min-width:100px;transition:all .2s;}
+.tree-node:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.tree-node.has{background:var(--success-light);border-color:var(--success);color:var(--success);}
+.tree-node.miss{background:var(--danger-light);border-color:var(--danger);color:var(--danger);}
+.tree-node.core{background:var(--primary-light);border-color:var(--primary);color:var(--primary);}
+.tree-connector{width:2px;height:16px;background:var(--border);margin:0 auto;}
+.tree-branch{display:flex;justify-content:center;gap:4px;}
+.tree-branch::before,.tree-branch::after{content:'';height:2px;background:var(--border);flex:1;align-self:center;}
+.tree-branch-label{font-size:9px;color:var(--text3);padding:2px 8px;white-space:nowrap;}
+
+.vac-card{border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .2s;box-shadow:var(--shadow);background:var(--surface);}
+.vac-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.vac-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.vac-title{font-size:13.5px;font-weight:600;}
+.vac-match{font-size:20px;font-weight:700;}
+.vac-meta{font-size:11.5px;color:var(--text3);display:flex;gap:10px;margin-bottom:8px;}
+.match-bar{width:100%;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.match-bar .fill{height:100%;border-radius:2px;transition:width .6s ease;}
+.vac-skills{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;}
+.vac-skill{font-size:10px;padding:2px 8px;border-radius:100px;}
+.vac-skill.ok{background:var(--success-light);color:var(--success);}
+.vac-skill.no{background:var(--surface2);color:var(--text3);}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--toast-border);border-radius:var(--radius-sm);padding:14px 20px;font-size:13px;color:var(--text);box-shadow:var(--shadow-md);z-index:100;display:flex;align-items:center;gap:10px;transform:translateY(100px);opacity:0;transition:all .3s ease;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast .toast-icon{font-size:18px;}
+#themeToggle{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+#themeToggle:hover{background:var(--surface2);transform:rotate(20deg);}
+
+.fade-in{animation:fadeIn .4s ease forwards;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.stagger-1{animation-delay:.05s;opacity:0;}
+.stagger-2{animation-delay:.1s;opacity:0;}
+.stagger-3{animation-delay:.15s;opacity:0;}
+.stagger-4{animation-delay:.2s;opacity:0;}
+.stagger-5{animation-delay:.25s;opacity:0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo"><div class="icon">🧭</div>Карьерный GPS</div>
+  <div class="topbar-right"><button id="themeToggle" onclick="toggleTheme()">🌙</button><button>🔔</button><button>❓ Помощь</button></div>
+</div>
+
+<div class="container">
+
+  <div class="card" id="profileCard">
+    <div class="profile-header">
+      <div class="profile-photo">АП</div>
+      <div class="profile-info">
+        <div class="profile-name">Алексей Петров</div>
+        <div class="profile-meta">
+          <div class="profile-meta-item">📅 Стаж: <strong>4 года</strong></div>
+          <div class="profile-meta-item">👤 Руководитель: <strong>Мария Иванова</strong></div>
+          <div class="profile-meta-item">🏢 Отдел: <strong>L&D</strong></div>
+        </div>
+        <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <label style="font-size:12.5px;color:var(--text2);">Должность:</label>
+          <select class="field" id="positionSelect" onchange="updateProfile()">
+            <option value="hrbp">HR BP</option>
+            <option value="teamlead" selected>Тимлид</option>
+            <option value="assessment">Руководитель проектов оценки</option>
+            <option value="director">Директор направления</option>
+          </select>
+          <span class="badge green" id="readyBadge"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="currentPosCard">
+    <div class="card-title">📍 Текущая позиция</div>
+    <div id="currentPos"></div>
+  </div>
+
+  <div class="card" id="ladderCard">
+    <div class="card-title">🪜 Карьерная лестница</div>
+    <div id="careerLadder"></div>
+  </div>
+
+  <div class="card" id="trajectoriesCard">
+    <div class="card-title">🧭 Карьерные траектории</div>
+    <div class="grid-2">
+      <div>
+        <div class="section-label">Основные траектории</div>
+        <div id="priorityPlans"></div>
+      </div>
+      <div>
+        <div class="section-label">Смежные направления</div>
+        <div id="altPlans"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="readinessCard">
+    <div class="card-title">📊 Готовность к переходу <span class="card-subtitle">— вертикальные столбцы</span></div>
+    <div class="summary-row" id="summaryRow"></div>
+    <div class="vbars" id="vbars"></div>
+    <div style="display:flex;gap:20px;margin-top:8px;justify-content:center;">
+      <span style="font-size:11px;color:var(--text3);">━━ <span style="color:var(--primary);">Текущий уровень</span></span>
+      <span style="font-size:11px;color:var(--text3);">- - <span style="color:var(--success);">Целевой уровень</span></span>
+    </div>
+  </div>
+
+  <div class="card" id="skillsCard">
+    <div class="card-title">⭐ Навыки и компетенции</div>
+    <div class="grid-2">
+      <div>
+        <div class="skills-group">
+          <div class="skills-group-title" style="color:var(--danger);">🔴 Обязательные для позиции</div>
+          <div id="skillsRequired"></div>
+        </div>
+        <div class="skills-group">
+          <div class="skills-group-title" style="color:var(--info);">🔵 Желательные для позиции</div>
+          <div id="skillsDesirable"></div>
+        </div>
+        <div style="margin-top:10px;" id="developBtns"></div>
+      </div>
+      <div>
+        <div class="skills-group-title" style="color:var(--text2);margin-bottom:10px;">🌳 Древо навыков</div>
+        <div id="skillTree"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="vacanciesCard">
+    <div class="card-title">💼 Доступные вакансии</div>
+    <div class="grid-2" id="vacancies"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"><span class="toast-icon">✅</span><span id="toastText"></span></div>
+
+<script>
+const roleData = {
+  hrbp:{
+    currentPos:'HR BP',
+    currentDesc:'Бизнес-партнёрство с продуктовыми командами: подбор, адаптация, онбординг, решение кадровых вопросов, работа с LMS.',
+    recommendations:['Развивать стратегическое мышление через участие в бизнес-проектах','Освоить HR-аналитику и построение дашбордов','Начать работать с управлением талантами на уровне направления'],
+    goal:'Senior HR BP',
+    plans:[
+      {title:'Senior HR BP',desc:'Повышение до старшего бизнес-партнёра: стратегическое консультирование бизнес-лидеров, управление талантами, развитие HR-аналитики.',readiness:68,skills:{required:['Понимание бизнеса','Стратегическое мышление','HR-аналитика'],desirable:['Управление изменениями','Управление талантами','Коммуникация'],has:[0,1,5],miss:[2,3,4]}},
+      {title:'Руководитель HR BP',desc:'Руководство командой HR BP, построение HR-стратегии для направления, управление преемственностью и HR-бюджетом.',readiness:35,skills:{required:['Лидерство','Бюджетирование','Стратегия'],desirable:['Менторинг','Переговоры','HR-право'],has:[0,5],miss:[1,2,3,4]}},
+      {title:'HR Директор',desc:'Стратегическое управление всем HR-направлением компании: от рекрутинга до культуры, от компенсаций до трансформации процессов.',readiness:12,skills:{required:['Организационный дизайн','Трансформация процессов'],desirable:['Талант-менеджмент','Корпоративная культура'],has:[],miss:[0,1,2,3]}}
+    ],
+    alt:[
+      {title:'Руководитель развития талантов',desc:'Руководство направлением развития талантов: программы наставничества, лидерские треки, assessment центры.',readiness:25,skills:{required:['Оценка компетенций','Развитие лидерства'],desirable:['Assessment','Коучинг','L&D стратегия'],has:[4],miss:[0,1,2,3]}},
+      {title:'Руководитель HR-операций',desc:'Оптимизация HR-процессов, автоматизация, управление HRIS и Compliance. Операционное ядро HR-департамента.',readiness:8,skills:{required:['HRIS','Процессы'],desirable:['Compliance','Автоматизация','Метрики'],has:[],miss:[0,1,2,3,4]}}
+    ],
+    readiness:{total:62,items:[
+      {name:'Понимание бизнеса',pct:80,target:90,color:'var(--success)'},
+      {name:'Стратегическое мышление',pct:65,target:85,color:'var(--primary)'},
+      {name:'HR-аналитика',pct:50,target:80,color:'var(--warning)'},
+      {name:'Управление изменениями',pct:55,target:80,color:'var(--warning)'},
+      {name:'Коммуникация и влияние',pct:70,target:90,color:'var(--success)'}
+    ]},
+    skillsRequired:['Коммуникация','Подбор и адаптация','Трудовое право','Кадровое делопроизводство'],
+    skillsDesirable:['Базовая HR-аналитика','Наставничество','Онбординг','Работа с LMS'],
+    treeRoot:'HR BP',
+    treeLevels:[
+      {label:'Ядро',skills:[{name:'Коммуникация',has:true},{name:'Подбор',has:true},{name:'Трудовое право',has:true}]},
+      {label:'Базовые',skills:[{name:'HR-аналитика',has:true},{name:'Адаптация',has:true},{name:'Наставничество',has:true}]},
+      {label:'Продвинутые',skills:[{name:'Стратегия',has:false},{name:'Бюджет',has:false},{name:'Таланты',has:false}]},
+      {label:'Лидерство',skills:[{name:'Лидерство',has:false},{name:'Трансформация',has:false}]}
+    ],
+    vacancies:[
+      {title:'HR BP',dept:'Продуктовое направление',loc:'Москва',match:78,skills:['Подбор ✅','Адаптация ✅','Аналитика ⬜','Стратегия ⬜']},
+      {title:'Senior HR BP',dept:'Технологическое направление',loc:'Гибрид',match:52,skills:['Стратегия ⬜','Аналитика ⬜','Бизнес ⬜','Изменения ⬜']},
+      {title:'HR BP (Дирекция по персоналу)',dept:'Бэк-офис',loc:'Москва',match:70,skills:['Подбор ✅','Коммуникация ✅','Таланты ⬜','HRIS ⬜']}
+    ]
+  },
+  teamlead:{
+    currentPos:'Тимлид',
+    currentDesc:'Руководство командой из 5 специалистов по обучению: онбординг, развитие компетенций, управление знаниями, коучинг наставников.',
+    recommendations:['Развить навыки проектного управления для масштабирования программ','Освоить методологии AC/DC для оценки эффективности обучения','Работать с бюджетом и метриками ROI обучения'],
+    goal:'Руководитель направления корпоративного обучения',
+    plans:[
+      {title:'Руководитель направления корпоративного обучения',desc:'Стратегическое руководство L&D-направлением: разработка стратегии обучения, управление бюджетом и командой, внедрение EdTech, метрики эффективности.',readiness:58,skills:{required:['Стратегия','Лидерство','Бюджетирование'],desirable:['Масштабирование','Интеграция с бизнесом','Системное видение'],has:[0,4],miss:[1,2,3,5]}},
+      {title:'Тимлид команды оценки',desc:'Управление проектами assessment/development center, разработка методик оценки, координация оценщиков, аналитика результатов.',readiness:42,skills:{required:['Assessment','Проектное управление','Методология'],desirable:['Аналитика','Стейкхолдеры','Коммуникация'],has:[0,5],miss:[1,2,3,4]}},
+      {title:'Руководитель HR BP',desc:'Руководство командой HR BP, построение HR-стратегии для направления, управление преемственностью и HR-бюджетом.',readiness:30,skills:{required:['Лидерство','Бюджетирование','Стратегия'],desirable:['Менторинг','Переговоры','HR-право'],has:[0,5],miss:[1,2,3,4]}}
+    ],
+    alt:[
+      {title:'Тимлид L&D',desc:'Руководство командой обучения: онбординг, развитие компетенций, управление знаниями, коучинг наставников.',readiness:72,skills:{required:['Лидерство','Коучинг'],desirable:['Фасилитация','Управление знаниями','Менторинг'],has:[0,3,4],miss:[1,2]}},
+      {title:'Руководитель направления методологии',desc:'Разработка методологий обучения и оценки, стандарты контента, контроль качества образовательных программ.',readiness:38,skills:{required:['Инструктаж','Дизайн обучения'],desirable:['Стандарты','Качество','Аналитика'],has:[0,4],miss:[1,2,3]}}
+    ],
+    readiness:{total:58,items:[
+      {name:'Assessment / AC / DC',pct:70,target:85,color:'var(--success)'},
+      {name:'Проектное управление',pct:55,target:80,color:'var(--warning)'},
+      {name:'Методология оценки',pct:60,target:85,color:'var(--primary)'},
+      {name:'Аналитика данных',pct:45,target:75,color:'var(--warning)'},
+      {name:'Коммуникация со стейкхолдерами',pct:65,target:85,color:'var(--primary)'}
+    ]},
+    skillsRequired:['Фасилитация','Коучинг','Оценка компетенций','Работа с группами'],
+    skillsDesirable:['Управление знаниями','Наставничество','Менторинг','Организация мероприятий'],
+    treeRoot:'Тимлид L&D',
+    treeLevels:[
+      {label:'Ядро',skills:[{name:'Фасилитация',has:true},{name:'Коучинг',has:true},{name:'Оценка',has:true}]},
+      {label:'Базовые',skills:[{name:'Группы',has:true},{name:'Знания',has:true},{name:'Менторинг',has:true}]},
+      {label:'Продвинутые',skills:[{name:'AC/DC',has:false},{name:'Проекты',has:false},{name:'Методология',has:false}]},
+      {label:'Лидерство',skills:[{name:'Лидерство',has:false},{name:'Бюджет',has:false}]}
+    ],
+    vacancies:[
+      {title:'Тимлид L&D',dept:'Центр развития',loc:'Гибрид',match:75,skills:['Коучинг ✅','Фасилитация ✅','Лидерство ⬜','Стратегия ⬜']},
+      {title:'Руководитель направления методологии',dept:'Команда обучения',loc:'Москва',match:60,skills:['Методологии ⬜','Дизайн ⬜','Оценка ✅','Аналитика ⬜']},
+      {title:'Руководитель проектов оценки',dept:'HR-дирекция',loc:'Москва',match:65,skills:['Оценка ✅','Проекты ⬜','Аналитика ⬜','Методология ⬜']}
+    ]
+  },
+  assessment:{
+    currentPos:'Руководитель проектов оценки',
+    currentDesc:'Управление проектами AC/DC, разработка методик оценки, координация оценщиков, аналитика результатов.',
+    recommendations:['Развить стратегическое мышление для перехода на уровень руководителя направления','Освоить бюджетирование для управления финансами проектов','Работать с leadership через коучинг и менторинг'],
+    goal:'Тимлид команды оценки',
+    plans:[
+      {title:'Тимлид команды оценки',desc:'Управление проектами assessment/development center, разработка методик оценки, координация оценщиков, аналитика результатов.',readiness:65,skills:{required:['Assessment','Проектное управление','Методология'],desirable:['Аналитика','Стейкхолдеры','Коммуникация'],has:[0,4,5],miss:[1,2,3]}},
+      {title:'Руководитель направления корпоративного обучения',desc:'Стратегическое руководство L&D-направлением: стратегия обучения, бюджет, команда, EdTech, метрики эффективности.',readiness:15,skills:{required:['Стратегия','Лидерство','Бюджетирование'],desirable:['Масштабирование','EdTech','Системное видение'],has:[],miss:[0,1,2,3,4,5]}},
+      {title:'HR бизнес-партнёр',desc:'Стратегическое консультирование бизнес-лидеров, управление талантами, развитие HR-аналитики на уровне бизнес-направления.',readiness:35,skills:{required:['Понимание бизнеса','Стратегия','HR-аналитика'],desirable:['Управление талантами','Коммуникация','Изменения'],has:[4,5],miss:[0,1,2,3]}}
+    ],
+    alt:[
+      {title:'Руководитель подразделения HR аналитики',desc:'Руководство аналитикой персонала: people data, предиктивные модели, дашборды для руководства, HR-метрики.',readiness:28,skills:{required:['People Analytics','Статистика'],desirable:['Дашборды','Стратегия','Визуализация'],has:[3],miss:[0,1,2,4]}},
+      {title:'Руководитель направления развития талантов',desc:'Стратегия развития талантов: лидерские треки, преемственность, assessment, внутренний рынок.',readiness:22,skills:{required:['Таланты','Преемственность'],desirable:['Assessment','Стратегия','Лидерство'],has:[2],miss:[0,1,3,4]}}
+    ],
+    readiness:{total:55,items:[
+      {name:'Методология оценки',pct:75,target:90,color:'var(--success)'},
+      {name:'Управление проектами',pct:60,target:80,color:'var(--primary)'},
+      {name:'Стратегическое мышление',pct:40,target:75,color:'var(--danger)'},
+      {name:'Бюджетирование',pct:30,target:70,color:'var(--danger)'},
+      {name:'Лидерство',pct:55,target:80,color:'var(--warning)'}
+    ]},
+    skillsRequired:['Разработка AC/DC','Методология оценки','Проектное управление','Аналитика данных'],
+    skillsDesirable:['Валидация инструментов','Статистика','Презентация результатов','Работа с оценщиками'],
+    treeRoot:'Оценка',
+    treeLevels:[
+      {label:'Ядро',skills:[{name:'AC/DC',has:true},{name:'Методология',has:true},{name:'Проекты',has:true}]},
+      {label:'Базовые',skills:[{name:'Аналитика',has:true},{name:'Валидация',has:true},{name:'Статистика',has:true}]},
+      {label:'Продвинутые',skills:[{name:'Стратегия',has:false},{name:'Бюджет',has:false},{name:'Лидерство',has:false}]},
+      {label:'Управление',skills:[{name:'Команда',has:false},{name:'Бизнес',has:false}]}
+    ],
+    vacancies:[
+      {title:'Тимлид команды оценки',dept:'HR-дирекция',loc:'Москва',match:82,skills:['Оценка ✅','Проекты ✅','Методология ✅','Аналитика ✅']},
+      {title:'Руководитель подразделения HR аналитики',dept:'HR-аналитика',loc:'Гибрид',match:55,skills:['Аналитика ✅','Статистика ✅','Дашборды ⬜','Стратегия ⬜']},
+      {title:'Руководитель проектов оценки',dept:'Центр оценки',loc:'Москва',match:70,skills:['Оценка ✅','Проекты ⬜','Методология ⬜','Лидерство ⬜']}
+    ]
+  },
+  director:{
+    currentPos:'Директор направления',
+    currentDesc:'Стратегическое руководство направлением обучения и оценки: EdTech, образовательные экосистемы, метрики ROI, развитие корпоративного университета.',
+    recommendations:['Развить навыки управления финансами для работы с крупными бюджетами','Освоить брендинг работодателя для привлечения талантов','Работать с корпоративным управлением и презентациями для топ-менеджмента'],
+    goal:'HR Директор',
+    plans:[
+      {title:'HR Директор',desc:'Стратегическое управление HR-департаментом: от рекрутинга до компенсаций, от культуры до трансформации процессов. Полная ответственность за кадровую политику.',readiness:70,skills:{required:['Стратегия','Лидерство','Финансы'],desirable:['Трансформация процессов','Культура','Таланты'],has:[0,1],miss:[2,3,4,5]}},
+      {title:'Вице-президент по персоналу',desc:'Стратегическое руководство всеми HR-процессами компании: кадровая политика, развитие бренда работодателя, планирование штата, управление изменениями.',readiness:25,skills:{required:['Глобальная стратегия','Бренд работодателя','Планирование штата'],desirable:['Управление изменениями','Корпоративная культура'],has:[],miss:[0,1,2,3,4]}},
+      {title:'Главный директор по персоналу',desc:'Член высшего руководства: стратегия компании через людей, взаимодействие с советом директоров, трансформация бизнеса через HR.',readiness:8,skills:{required:['Стратегия бизнеса','Лидерство уровня C','Финансы'],desirable:['Корпоративное управление','Трансформация процессов','Видение'],has:[],miss:[0,1,2,3,4]}}
+    ],
+    alt:[
+      {title:'Директор L&D',desc:'Стратегическое руководство обучением: EdTech, образовательные экосистемы, метрики ROI, развитие корпоративного университета.',readiness:75,skills:{required:['Стратегия обучения','EdTech'],desirable:['Бюджетирование','Корпоративный университет','Понимание бизнеса'],has:[0,4],miss:[1,2,3]}},
+      {title:'Директор по талантам',desc:'Стратегия талантов: преемственность, развитие лидерства, внутренний рынок, assessment, развитие бренда работодателя.',readiness:40,skills:{required:['Таланты','Преемственность'],desirable:['Assessment','Лидерство','Бренд работодателя'],has:[0],miss:[1,2,3,4]}}
+    ],
+    readiness:{total:70,items:[
+      {name:'Стратегическое мышление',pct:75,target:90,color:'var(--success)'},
+      {name:'Лидерство',pct:80,target:95,color:'var(--success)'},
+      {name:'Понимание бизнеса',pct:65,target:85,color:'var(--primary)'},
+      {name:'Управление бюджетом',pct:60,target:80,color:'var(--primary)'},
+      {name:'Трансформационные проекты',pct:55,target:80,color:'var(--warning)'}
+    ]},
+    skillsRequired:['Стратегическое мышление','Лидерство','Понимание бизнеса','Управление командой'],
+    skillsDesirable:['Стратегия обучения','Управление изменениями','Стейкхолдеры','Коммуникация уровня руководства'],
+    treeRoot:'Директор',
+    treeLevels:[
+      {label:'Ядро',skills:[{name:'Стратегия',has:true},{name:'Лидерство',has:true},{name:'Бизнес',has:true}]},
+      {label:'Базовые',skills:[{name:'Команда',has:true},{name:'Обучение',has:true},{name:'Изменения',has:true}]},
+      {label:'Продвинутые',skills:[{name:'Финансы',has:false},{name:'Бренд',has:false},{name:'Трансформация',has:false}]},
+      {label:'C-level',skills:[{name:'Глоб. стратегия',has:false},{name:'Совет директоров',has:false}]}
+    ],
+    vacancies:[
+      {title:'Директор L&D',dept:'HR-дирекция',loc:'Москва',match:72,skills:['Стратегия ✅','Команда ✅','EdTech ⬜','Бюджет ⬜']},
+      {title:'Директор по талантам',dept:'Центр развития',loc:'Гибрид',match:60,skills:['Таланты ⬜','Преемственность ⬜','Стратегия ✅','Лидерство ✅']},
+      {title:'HR Директор',dept:'Весь HR',loc:'Москва',match:45,skills:['Стратегия ✅','Финансы ⬜','Трансформация ⬜','Управление ⬜']}
+    ]
+  }
+};
+
+const barColors = ['#6366F1','#10B981','#0EA5E9','#F59E0B','#EF4444'];
+
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  document.getElementById('themeToggle').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  drawBars(roleData[document.getElementById('positionSelect').value].readiness.items);
+}
+
+function showToast(text) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastText').textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function animateCards() {
+  const cards = ['currentPosCard','ladderCard','trajectoriesCard','readinessCard','skillsCard','vacanciesCard'];
+  cards.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(12px)';
+    setTimeout(() => { el.style.transition = 'opacity .4s ease, transform .4s ease'; el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 60 * (i + 1));
+  });
+}
+
+function togglePlan(el) { el.classList.toggle('expanded'); }
+
+function drawBars(items) {
+  const el = document.getElementById('vbars');
+  el.innerHTML = items.map((it,i) => {
+    const c = barColors[i % 5];
+    return '<div class="vbar fade-in stagger-'+(i+1)+'">' +
+      '<div class="vbar-value" style="color:'+c+';">'+it.pct+'%</div>' +
+      '<div class="vbar-track">' +
+        '<div class="vbar-target-line" style="bottom:'+it.target+'%;"><span class="vbar-target-label">цель '+it.target+'%</span></div>' +
+        '<div class="vbar-fill" style="height:'+it.pct+'%;background:'+c+';"></div>' +
+      '</div>' +
+      '<div class="vbar-label">'+it.name+'</div>' +
+    '</div>';
+  }).join('');
+
+  const sorted = [...items].sort((a,b) => b.pct - a.pct);
+  const weakest = [...items].sort((a,b) => (b.target - b.pct) - (a.target - a.pct));
+  document.getElementById('summaryRow').innerHTML =
+    '<div class="summary-box total fade-in stagger-1"><div class="big">'+Math.round(items.reduce((s,i) => s + i.pct, 0) / items.length)+'%</div><div class="label">Средняя готовность</div></div>' +
+    '<div class="summary-box strength fade-in stagger-2"><div class="big">'+sorted[0].pct+'%</div><div class="label">Сильная сторона<br>'+sorted[0].name+'</div></div>' +
+    '<div class="summary-box growth fade-in stagger-3"><div class="big">'+(weakest[0].target - weakest[0].pct)+'%</div><div class="label">Зона роста<br>'+weakest[0].name+'</div></div>';
+}
+
+function updateProfile() {
+  const pos = document.getElementById('positionSelect').value;
+  const d = roleData[pos];
+
+  document.getElementById('readyBadge').textContent = '\u{1F7E2} Готов к переходу: ' + d.plans[0].title;
+
+  document.getElementById('currentPos').innerHTML =
+    '<div class="current-pos">' +
+      '<div class="current-pos-icon">👤</div>' +
+      '<div class="current-pos-info">' +
+        '<div class="current-pos-title">'+d.currentPos+'</div>' +
+        '<div class="current-pos-desc">'+d.currentDesc+'</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="recommendation-list">' +
+      d.recommendations.map(r => '<div class="rec-item"><span class="rec-icon">💡</span>'+r+'</div>').join('') +
+    '</div>';
+
+  var allTracks = [{title:d.currentPos,pct:100,type:'current'}].concat(
+    d.plans.map(function(p){return {title:p.title,pct:p.readiness,type:'target'};}),
+    d.alt.map(function(a){return {title:a.title,pct:a.readiness,type:'alt'};})
+  );
+  document.getElementById('careerLadder').innerHTML = '<div class="h-ladder">' + allTracks.map(function(t){
+    var c = t.type==='current'?'var(--text2)':t.pct>=70?'var(--success)':t.pct>=50?'var(--primary)':'var(--warning)';
+    var tag = t.type==='current'?'<span class="badge gray">Текущая</span>':t.type==='target'?'<span class="badge green">Основная</span>':'<span class="badge orange">Смежная</span>';
+    return '<div class="h-ladder-node '+t.type+'">' +
+      '<div class="h-ladder-dot"></div>' +
+      '<div class="h-ladder-card">' +
+        '<div class="hl-tag">'+tag+'</div>' +
+        '<div class="hl-title">'+t.title+'</div>' +
+        '<div class="hl-pct" style="color:'+c+';">'+t.pct+'%</div>' +
+        '<div class="hl-sub">готовность</div>' +
+      '</div>' +
+    '</div>';
+  }).join('') + '</div>';
+
+  document.getElementById('priorityPlans').innerHTML = d.plans.map(function(p,i){
+    var c = p.readiness>=70?'var(--success)':p.readiness>=50?'var(--primary)':'var(--warning)';
+    return '<div class="plan-card" onclick="togglePlan(this)">' +
+      '<div class="plan-header"><div><div class="plan-tag"><span class="badge purple">Траектория '+(i+1)+'</span></div><div class="plan-title">'+p.title+'</div></div><div class="plan-pct" style="color:'+c+';">'+p.readiness+'%</div></div>' +
+      '<div class="plan-desc">'+p.desc+'</div>' +
+      '<div class="plan-expand"><span class="arrow">▼</span> Подробнее</div>' +
+      '<div class="plan-details"><div class="plan-progress"><div class="plan-progress-label"><span>Прогресс готовности</span><span style="color:'+c+';">'+p.readiness+'%</span></div><div class="progress-bar"><div class="fill" style="width:'+p.readiness+'%;background:'+c+';"></div></div></div>' +
+      '<div style="margin-top:8px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast(\''+p.title+'\')">📄 План развития</button><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast(\'Открыт каталог курсов\')">📚 Курсы</button></div></div></div>';
+  }).join('');
+
+  document.getElementById('altPlans').innerHTML = d.alt.map(function(p){
+    var c = p.readiness>=70?'var(--success)':p.readiness>=50?'var(--primary)':'var(--warning)';
+    return '<div class="plan-card" onclick="togglePlan(this)">' +
+      '<div class="plan-header"><div><div class="plan-tag"><span class="badge orange">Смежная</span></div><div class="plan-title">'+p.title+'</div></div><div class="plan-pct" style="color:'+c+';">'+p.readiness+'%</div></div>' +
+      '<div class="plan-desc">'+p.desc+'</div>' +
+      '<div class="plan-expand"><span class="arrow">▼</span> Подробнее</div>' +
+      '<div class="plan-details"><div class="plan-progress"><div class="plan-progress-label"><span>Прогресс готовности</span><span style="color:'+c+';">'+p.readiness+'%</span></div><div class="progress-bar"><div class="fill" style="width:'+p.readiness+'%;background:'+c+';"></div></div></div>' +
+      '<div style="margin-top:8px;display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast(\''+p.title+'\')">📄 План развития</button><button class="btn btn-outline btn-sm" onclick="event.stopPropagation();showToast(\'Открыт каталог курсов\')">📚 Курсы</button></div></div></div>';
+  }).join('');
+
+  drawBars(d.readiness.items);
+
+  document.getElementById('skillsRequired').innerHTML = d.skillsRequired.map(function(s){return '<span class="skill-chip miss" onclick="showToast(\''+s+' — добавлено в план развития\')"><span class="chip-icon">🔴</span>'+s+'<div class="skill-actions"><button onclick="event.stopPropagation();showToast(\'Открыт каталог курсов\')">📚 Курсы</button><button onclick="event.stopPropagation();showToast(\'Добавлено в план\')">➕ В план</button></div></span>';}).join('');
+  document.getElementById('skillsDesirable').innerHTML = d.skillsDesirable.map(function(s){return '<span class="skill-chip has" onclick="showToast(\''+s+' — желательный навык для позиции\')"><span class="chip-icon">🔵</span>'+s+'<div class="skill-actions"><button onclick="event.stopPropagation();showToast(\'Добавлено в портфолио\')">📌 В портфолио</button></div></span>';}).join('');
+  document.getElementById('developBtns').innerHTML = '<button class="btn btn-primary btn-sm" onclick="showToast(\'Переход в каталог обучения...\')">🚀 Начать развитие</button> <button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="showToast(\'PDF-отчёт формируется...\')">📄 Скачать план</button>';
+
+  var tree = d.treeLevels;
+  document.getElementById('skillTree').innerHTML =
+    '<div class="tree-container">' +
+      '<div class="tree-level"><div class="tree-node core">'+d.treeRoot+'</div></div>' +
+      tree.map(function(level){
+        return '<div class="tree-connector"></div><div class="tree-branch"><span class="tree-branch-label">'+level.label+'</span></div><div class="tree-connector"></div><div class="tree-level">' +
+          level.skills.map(function(s){return '<div class="tree-node '+(s.has?'has':'miss')+'">'+(s.has?'✅':'⬜')+' '+s.name+'</div>';}).join('') +
+        '</div>';
+      }).join('') +
+    '</div>';
+
+  document.getElementById('vacancies').innerHTML = d.vacancies.map(function(v){
+    var mColor = v.match>=70?'var(--success)':v.match>=50?'var(--primary)':'var(--warning)';
+    return '<div class="vac-card fade-in">' +
+      '<div class="vac-header"><div class="vac-title">'+v.title+'</div><div class="vac-match" style="color:'+mColor+';">'+v.match+'%</div></div>' +
+      '<div class="vac-meta"><span>🏢 '+v.dept+'</span><span>📍 '+v.loc+'</span></div>' +
+      '<div class="match-bar"><div class="fill" style="width:'+v.match+'%;background:'+mColor+';"></div></div>' +
+      '<div class="vac-skills">'+v.skills.map(function(s){return '<span class="vac-skill '+(s.indexOf('✅')>-1?'ok':'no')+'">'+s+'</span>';}).join('')+'</div>' +
+      '<div style="margin-top:8px;display:flex;gap:6px;"><button class="btn btn-outline btn-sm" onclick="showToast(\'Подробности: '+v.title+'\')">Подробнее</button><button class="btn btn-outline btn-sm" onclick="showToast(\'Заявка на '+v.title+' отправлена!\')">Подать заявку</button></div>' +
+    '</div>';
+  }).join('');
+
+  animateCards();
+}
+updateProfile();
+</script>
+</body>
+</html>
