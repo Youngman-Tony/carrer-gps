@@ -431,6 +431,8 @@ select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primar
   <div id="skillPopupBody"></div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 var skillTips={
 'Лидерство':'Возьмите инициативу в проекте или проведите тренинг для коллег',
@@ -1183,9 +1185,20 @@ function updateProfile() {
 }
 
 /* Counter */
-function getCounter(k) { return parseInt(localStorage.getItem('gps_' + k) || '0', 10); }
-function setCounter(k, v) { localStorage.setItem('gps_' + k, String(v)); renderCounters(); }
+var FB_CONFIG = {
+  apiKey: 'PASTE_API_KEY',
+  authDomain: 'PASTE_PROJECT_ID.firebaseapp.com',
+  databaseURL: 'https://PASTE_PROJECT_ID-default-rtdb.firebaseio.com',
+  projectId: 'PASTE_PROJECT_ID'
+};
+var fbReady = false;
+if (typeof firebase !== 'undefined' && FB_CONFIG.apiKey.indexOf('PASTE') === -1) {
+  try { firebase.initializeApp(FB_CONFIG); fbReady = true; } catch (e) { fbReady = false; }
+}
 var counterKeys = ['dev', 'eval', 'resume', 'consult', 'track', 'vacs'];
+var counterData = {};
+counterKeys.forEach(function(k) { counterData[k] = parseInt(localStorage.getItem('gps_' + k) || '0', 10); });
+function getCounter(k) { return parseInt(counterData[k] || '0', 10); }
 function renderCounters() {
   var total = 0;
   counterKeys.forEach(function(k) {
@@ -1195,13 +1208,43 @@ function renderCounters() {
   });
   document.getElementById('counterBadge').textContent = total;
 }
-function incrementDevCounter() { setCounter('dev', getCounter('dev') + 1); }
-function incrementEvalCounter() { setCounter('eval', getCounter('eval') + 1); }
-function incrementResumeCounter() { setCounter('resume', getCounter('resume') + 1); }
-function incrementConsultCounter() { setCounter('consult', getCounter('consult') + 1); }
-function incrementTrackCounter() { setCounter('track', getCounter('track') + 1); }
-function incrementVacsCounter() { setCounter('vacs', getCounter('vacs') + 1); }
-function resetCounters() { counterKeys.forEach(function(k) { localStorage.removeItem('gps_' + k); }); renderCounters(); }
+function incrementCounter(k) {
+  if (fbReady) {
+    firebase.database().ref('counters/' + k).transaction(function(cur) {
+      return (cur || 0) + 1;
+    }, function(err, committed) {
+      if (err || !committed) {
+        counterData[k] = getCounter(k) + 1;
+        localStorage.setItem('gps_' + k, String(counterData[k]));
+        renderCounters();
+      }
+    });
+  } else {
+    counterData[k] = getCounter(k) + 1;
+    localStorage.setItem('gps_' + k, String(counterData[k]));
+    renderCounters();
+  }
+}
+if (fbReady) {
+  firebase.database().ref('counters').on('value', function(snap) {
+    var v = snap.val() || {};
+    counterKeys.forEach(function(k) { counterData[k] = parseInt(v[k] || '0', 10); });
+    renderCounters();
+  });
+}
+function incrementDevCounter() { incrementCounter('dev'); }
+function incrementEvalCounter() { incrementCounter('eval'); }
+function incrementResumeCounter() { incrementCounter('resume'); }
+function incrementConsultCounter() { incrementCounter('consult'); }
+function incrementTrackCounter() { incrementCounter('track'); }
+function incrementVacsCounter() { incrementCounter('vacs'); }
+function resetCounters() {
+  counterKeys.forEach(function(k) {
+    if (fbReady) { firebase.database().ref('counters/' + k).set(0); }
+    else { counterData[k] = 0; localStorage.removeItem('gps_' + k); }
+  });
+  renderCounters();
+}
 function toggleCounter() { document.getElementById('counterPopup').classList.toggle('active'); }
 function closePlanModal() { document.getElementById('planModal').classList.remove('active'); }
 function openInfoModal() { document.getElementById('infoModal').classList.add('active'); }
