@@ -187,6 +187,40 @@ select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primar
   .skill-chip{font-size:12.5px;padding:6px 12px;}
   .btn{font-size:12.5px;padding:7px 14px;}
 }
+
+/* VERTICAL TRACK LIST (mobile) */
+.c-list{display:none;flex-direction:column;gap:10px;}
+.c-list-card{background:#fff;border:2px solid var(--gray-200);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;position:relative;}
+.c-list-card:hover{border-color:var(--primary);box-shadow:var(--shadow-md);}
+.c-list-card.current{background:#ECFDF5;border-color:#A7F3D0;cursor:default;}
+.c-list-card.selected{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light),var(--shadow-md);background:var(--primary-light);}
+.c-list-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;}
+.c-list-pct{font-size:24px;font-weight:700;flex-shrink:0;}
+.c-list-card .hl-title{font-size:15px;font-weight:600;color:var(--gray-800);}
+.c-list-card .hl-desc{font-size:13px;color:var(--gray-500);line-height:1.5;margin-top:4px;}
+.c-list-card .hl-sub{font-size:11px;color:var(--gray-400);margin-top:6px;}
+.c-list-card .hl-tag{margin-bottom:8px;}
+.c-list-bar{height:6px;background:var(--gray-200);border-radius:3px;overflow:hidden;margin-top:12px;}
+.c-list-bar .fill{height:100%;border-radius:3px;}
+
+/* SKILL POPUP */
+.skill-popup{position:fixed;z-index:200;max-width:min(320px,calc(100vw - 32px));background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-sm);box-shadow:0 8px 30px rgba(0,0,0,.16);padding:12px 14px;font-size:12.5px;line-height:1.5;color:var(--gray-700);display:none;pointer-events:none;}
+.skill-popup.active{display:block;}
+.skill-popup .sp-title{font-weight:700;color:var(--gray-800);margin-bottom:4px;font-size:13.5px;}
+
+/* VACANCY BADGE VARIANT */
+.vac-badge{display:inline-block;padding:5px 12px;border-radius:100px;font-size:15px;font-weight:700;flex-shrink:0;}
+.vac-card .vac-header{align-items:center;}
+.vac-btns{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+
+@media (max-width:768px){
+  .h-ladder{display:none;}
+  .c-list{display:flex;}
+  select.field{font-size:11.5px;padding:7px 10px;}
+  .pos-label{font-size:12px !important;}
+  .vac-btns .btn{flex:1 1 45%;justify-content:center;padding:9px 10px;}
+  .vac-exp{margin-left:auto;}
+}
 </style>
 </head>
 <body>
@@ -213,7 +247,7 @@ select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primar
           <div class="profile-meta-item">🏢 Отдел: <strong>L&D</strong></div>
         </div>
         <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-          <label style="font-size:13px;font-weight:500;color:var(--gray-600);">Текущая должность:</label>
+          <label class="pos-label" style="font-size:13px;font-weight:500;color:var(--gray-600);">Текущая должность:</label>
           <select class="field" id="positionSelect" onchange="updateProfile()">
             <optgroup label="БТИ">
               <option value="service" selected>Сервисный инженер</option>
@@ -295,6 +329,7 @@ select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primar
   <div class="card" id="ladderCard">
     <div class="card-title" id="radarTitle">Рекомендованные треки</div>
     <div id="careerLadder" style="margin-bottom:20px;"></div>
+    <div id="careerLadderList" class="c-list" style="margin-bottom:16px;"></div>
     <div style="display:flex;gap:20px;min-height:320px;" id="radarSection" >
       <div class="radar-section" style="flex-shrink:0;visibility:hidden;">
         <div class="radar-svg-wrap"><svg viewBox="0 0 340 340" width="280" height="280" id="radarSvg"></svg></div>
@@ -310,6 +345,7 @@ select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primar
   <div class="card" id="altCard" style="display:none;">
     <div class="card-title" id="altRadarTitle"></div>
     <div id="altLadder" style="margin-bottom:20px;"></div>
+    <div id="altLadderList" class="c-list" style="margin-bottom:16px;"></div>
     <div style="display:flex;gap:20px;min-height:320px;" id="altRadarSection">
       <div class="radar-section" style="flex-shrink:0;visibility:hidden;">
         <div class="radar-svg-wrap"><svg viewBox="0 0 340 340" width="280" height="280" id="altRadarSvg"></svg></div>
@@ -332,7 +368,7 @@ select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primar
     </div>
     <div style="flex:1;min-width:300px;border:1px dashed var(--gray-300);border-radius:var(--radius-sm);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--gray-50);">
       <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:38px;height:38px;border-radius:10px;background:var(--gray-100);border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:17px;">🎯</div>
+        <div style="width:38px;height:38px;border-radius:10px;background:var(--gray-100);border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:17px;margin-left:-4px;">🎯</div>
         <div style="font-size:13px;color:var(--gray-700);font-weight:600;">Хотите построить свой трек?</div>
       </div>
       <span class="btn btn-outline btn-sm" onclick="openInfoModal();incrementTrackCounter()" style="cursor:pointer;padding:8px 16px;flex-shrink:0;">Выбрать желаемую роль</span>
@@ -389,6 +425,11 @@ select.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primar
   <button class="cp-reset" onclick="resetCounters()">Сбросить счётчик</button>
 </div>
 <button class="counter-fab" id="counterFab" onclick="toggleCounter()">📊<span class="counter-badge" id="counterBadge">0</span></button>
+
+<div class="skill-popup" id="skillPopup">
+  <div class="sp-title" id="skillPopupTitle"></div>
+  <div id="skillPopupBody"></div>
+</div>
 
 <script>
 var skillTips={
@@ -899,10 +940,10 @@ function selectCurrentPosition() {
   document.getElementById('radarSection').querySelector('.radar-section').style.visibility='hidden';
   document.getElementById('altRadarSection').querySelector('.radar-section').style.visibility='hidden';
 
-  document.querySelectorAll('#careerLadder .h-ladder-node').forEach(function(n) {
+  document.querySelectorAll('#careerLadder .h-ladder-node, #careerLadderList .c-list-card').forEach(function(n) {
     n.classList.remove('selected');
   });
-  var currentNode = document.querySelector('#careerLadder .h-ladder-node.current');
+  var currentNode = document.querySelector('#careerLadder .h-ladder-node.current, #careerLadderList .c-list-card.current');
   if (currentNode) currentNode.classList.add('selected');
 
   drawDonut(
@@ -917,10 +958,10 @@ function selectTrajectory(idx) {
   document.getElementById('radarSection').querySelector('.radar-section').style.visibility='visible';
   var plan = currentRoleData.plans[idx];
 
-  document.querySelectorAll('#careerLadder .h-ladder-node').forEach(function(n) {
+  document.querySelectorAll('#careerLadder .h-ladder-node, #careerLadderList .c-list-card').forEach(function(n) {
     n.classList.remove('selected');
   });
-  document.querySelectorAll('#careerLadder .h-ladder-node').forEach(function(n) {
+  document.querySelectorAll('#careerLadder .h-ladder-node, #careerLadderList .c-list-card').forEach(function(n) {
     var title = n.querySelector('.hl-title');
     if (title && title.textContent === plan.title) n.classList.add('selected');
   });
@@ -945,10 +986,10 @@ function selectAltTrajectory(idx) {
   var altIdx = idx - currentRoleData.plans.length;
   var a = currentRoleData.alt[altIdx];
 
-  document.querySelectorAll('#altLadder .h-ladder-node').forEach(function(n) {
+  document.querySelectorAll('#altLadder .h-ladder-node, #altLadderList .c-list-card').forEach(function(n) {
     n.classList.remove('selected');
   });
-  document.querySelectorAll('#altLadder .h-ladder-node').forEach(function(n) {
+  document.querySelectorAll('#altLadder .h-ladder-node, #altLadderList .c-list-card').forEach(function(n) {
     var title = n.querySelector('.hl-title');
     if (title && title.textContent === a.title) n.classList.add('selected');
   });
@@ -993,6 +1034,29 @@ function makeLadderNode(type, title, desc, pct, planIdx, clickAttr) {
   return html;
 }
 
+function makeListCard(type, title, desc, pct, clickAttr) {
+  var tag = '';
+  if (type === 'current') tag = '<span class="badge gray">Текущая должность</span>';
+  else if (type === 'alt-node') tag = '<span class="badge orange">Смежный трек</span>';
+
+  var color = 'var(--success)';
+  var bar = '';
+  if (type !== 'current') {
+    if (pct < 50) color = 'var(--warning)';
+    else if (pct < 70) color = 'var(--primary)';
+    bar = '<div class="c-list-bar"><div class="fill" style="width:' + pct + '%;background:' + color + ';"></div></div>';
+  }
+
+  var html = '<div class="c-list-card ' + type + '"' + (clickAttr ? ' onclick="' + clickAttr + '"' : '') + '>';
+  html += '<div class="c-list-top">' + tag + (type !== 'current' ? '<span class="c-list-pct" style="color:' + color + ';">' + pct + '%</span>' : '') + '</div>';
+  html += '<div class="hl-title">' + title + '</div>';
+  if (desc) html += '<div class="hl-desc">' + desc + '</div>';
+  html += bar;
+  if (type !== 'current') html += '<div class="hl-sub">готовность к переходу</div>';
+  html += '</div>';
+  return html;
+}
+
 function updateProfile() {
   var pos = document.getElementById('positionSelect').value;
   var d = roleData[pos];
@@ -1010,7 +1074,7 @@ function updateProfile() {
   document.getElementById('skillsSubtitle').innerHTML = 'На основе оценки компетенций 2026';
   var _gs=new Set();d.plans.concat(d.alt||[]).forEach(function(p){var _a=p.skills.required.concat(p.skills.desirable);p.has.forEach(function(i){_gs.add(_a[i]);});});document.getElementById('skillsHave').innerHTML=Array.from(_gs).map(function(s){return '<span class="skill-chip has"><span class="chip-icon" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981;"></span>' + s + '</span>';}).join('');
   document.getElementById('skillsRequired').innerHTML = d.skillsRequired.map(function(s) {
-    return '<span class="skill-chip miss"><span class="chip-icon">🔴</span>' + s + '</span>';
+    return '<span class="skill-chip miss" data-skill="' + s + '"><span class="chip-icon">🔴</span>' + s + '</span>';
   }).join('');
   document.getElementById('skillsDesirable').innerHTML = d.skillsDesirable.map(function(s) {
     return '<span class="skill-chip" style="background:var(--info-light);color:#0369A1;"><span class="chip-icon">🔵</span>' + s + '</span>';
@@ -1047,6 +1111,15 @@ function updateProfile() {
   mainHtml += '</div>';
   document.getElementById('careerLadder').innerHTML = mainHtml;
 
+  var mainList = '';
+  mainList += makeListCard('current', d.currentPos, '', 100, '');
+  d.plans.forEach(function(p, i) {
+    var pct = Math.round(p.has.length / (p.has.length + p.miss.length) * 100);
+    mainList += makeListCard('target', p.title, p.desc, pct,
+      'selectTrajectory(' + i + ')');
+  });
+  document.getElementById('careerLadderList').innerHTML = mainList;
+
   // Alt ladder
   var altHtml = '';
   if (d.alt && d.alt.length) {
@@ -1060,6 +1133,16 @@ function updateProfile() {
     altHtml += '</div>';
   }
   document.getElementById('altLadder').innerHTML = altHtml;
+  var altList = '';
+  if (d.alt && d.alt.length) {
+    d.alt.forEach(function(a, i) {
+      var idx = d.plans.length + i;
+      var pct = Math.round(a.has.length / (a.has.length + a.miss.length) * 100);
+      altList += makeListCard('alt-node', a.title, a.desc, pct,
+        'selectAltTrajectory(' + idx + ')');
+    });
+  }
+  document.getElementById('altLadderList').innerHTML = altList;
   document.getElementById('altCard').style.display = altHtml ? '' : 'none';
 
   // Alt donut — default 0%
@@ -1075,17 +1158,18 @@ function updateProfile() {
   // Vacancies
   document.getElementById('vacancies').innerHTML = d.vacancies.map(function(v) {
     var mColor = v.match >= 70 ? 'var(--success)' : v.match >= 50 ? 'var(--primary)' : 'var(--warning)';
+    var bgColor = v.match >= 70 ? 'var(--success-light)' : v.match >= 50 ? 'var(--primary-light)' : 'var(--orange-light)';
     var skillHtml = v.skills.map(function(s) {
       var cls = s.indexOf('✅') >= 0 ? 'ok' : 'no';
       return '<span class="vac-skill ' + cls + '">' + s + '</span>';
     }).join('');
     return '<div class="vac-card">' +
       '<div class="vac-header"><div class="vac-title">' + v.title + '</div>' +
-      '<div class="vac-match" style="color:' + mColor + ';">' + v.match + '%</div></div>' +
+      '<span class="vac-badge" style="background:' + bgColor + ';color:' + mColor + ';">' + v.match + '%</span></div>' +
       '<div class="vac-meta"><span>🏢 ' + v.dept + '</span><span>📍 ' + v.loc + '</span></div>' +
       '<div class="match-bar"><div class="fill" style="width:' + v.match + '%;background:' + mColor + ';"></div></div>' +
       '<div class="vac-skills" style="margin-top:8px;">' + skillHtml + '</div>' +
-      '<div style="display:flex;gap:8px;margin-top:10px;align-items:center;">' +
+      '<div class="vac-btns">' +
       '<button class="btn btn-outline btn-sm">Подробнее</button>' +
       (v.rec ? '<button class="btn btn-primary btn-sm">Подать заявку</button>' : '') +
       '<span class="vac-exp">' + v.exp + '</span></div></div>';
@@ -1130,6 +1214,31 @@ document.addEventListener('click', function(e) {
   var p = document.getElementById('counterPopup');
   var f = document.getElementById('counterFab');
   if (p.classList.contains('active') && !p.contains(e.target) && !f.contains(e.target)) p.classList.remove('active');
+});
+
+var skillPopupEl = document.getElementById('skillPopup');
+function showSkillPopup(chip, skill) {
+  if (!skillPopupEl) return;
+  document.getElementById('skillPopupTitle').textContent = skill;
+  var tip = skillTips[skill];
+  document.getElementById('skillPopupBody').innerHTML = tip ? tip : 'Навык, который стоит развивать для перехода на следующий карьерный уровень.';
+  skillPopupEl.classList.add('active');
+  var r = chip.getBoundingClientRect();
+  var pw = skillPopupEl.offsetWidth;
+  var x = Math.min(Math.max(16, r.left + r.width / 2 - pw / 2), window.innerWidth - pw - 16);
+  var y = r.bottom + 10;
+  if (y + skillPopupEl.offsetHeight > window.innerHeight - 12) y = Math.max(12, r.top - skillPopupEl.offsetHeight - 10);
+  skillPopupEl.style.left = x + 'px';
+  skillPopupEl.style.top = y + 'px';
+}
+function hideSkillPopup() { if (skillPopupEl) skillPopupEl.classList.remove('active'); }
+document.addEventListener('click', function(e) {
+  var chip = e.target.closest ? e.target.closest('.skill-chip.miss') : null;
+  if (chip) {
+    showSkillPopup(chip, chip.getAttribute('data-skill') || chip.textContent);
+  } else {
+    hideSkillPopup();
+  }
 });
 
 renderCounters();
