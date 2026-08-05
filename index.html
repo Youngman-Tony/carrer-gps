@@ -1228,6 +1228,12 @@ function updateProfile() {
   document.getElementById('developBtns').innerHTML =
       '<a class="btn btn-primary" href="https://ankt.cc/Ab7dJO" target="_blank" onclick="incrementDevCounter()" style="text-decoration:none;margin-left:-40px;padding:12px 28px;font-size:15px;">🚀 Начать развитие</a>';
 
+  // Main donut — reset to default 0%
+  drawDonut(
+    'radarSvg', 'radarLegend', 'radarTitle',
+    0, 'Рекомендованные треки — ' + d.currentPos, [], [], {}
+  );
+
   document.getElementById('radarSection').querySelector('.radar-section').style.visibility='hidden';
 }
 
